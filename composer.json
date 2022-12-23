@@ -2,7 +2,7 @@
     "name": "legless/php-followthemoney",
     "type": "library",
     "require": {
-        "php": "~7.4",
+        "php": ">=7.4",
         "ext-yaml": "*",
         "ext-json": "*"
     },
@@ -18,7 +18,7 @@
         }
     },
     "autoload-dev": {
-        "psr-4": {
+        "psr-1": {
             "FollowTheMoney\\Tests\\": "tests"
         }
     }
