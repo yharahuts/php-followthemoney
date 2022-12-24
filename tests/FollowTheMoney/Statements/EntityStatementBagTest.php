@@ -16,8 +16,8 @@
 JSON;
 
 			$statements = EntityStatementBag::fromJson( $lines );
-			$this->assertEquals( $statements[ 0 ]->entity_id, 'bea008dac1ea309d22e100ceb0a5f3a44db882fa' );
-			$this->assertEquals( $statements[ 0 ]->val, 'ua' );
+			$this->assertEquals( 'bea008dac1ea309d22e100ceb0a5f3a44db882fa', $statements[ 0 ]->entity_id );
+			$this->assertEquals( 'ua', $statements[ 0 ]->val );
 		}
 
 		/**
@@ -38,8 +38,8 @@ JSON;
 			];
 
 			$statements = EntityStatementBag::fromArray( $array );
-			$this->assertEquals( $statements[ 0 ]->entity_id, 'bea008dac1ea309d22e100ceb0a5f3a44db882fa' );
-			$this->assertEquals( $statements[ 0 ]->val, 'ua' );
+			$this->assertEquals( 'bea008dac1ea309d22e100ceb0a5f3a44db882fa', $statements[ 0 ]->entity_id );
+			$this->assertEquals( 'ua', $statements[ 0 ]->val );
 		}
 
 		/**

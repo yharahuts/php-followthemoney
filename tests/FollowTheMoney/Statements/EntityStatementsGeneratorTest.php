@@ -30,12 +30,12 @@
 			$this->assertEquals( $statements->toArray( )[ 0 ][ 'entity_id' ], 'bea008dac1ea309d22e100ceb0a5f3a44db882fa' );
 
 			$statement = $statements[ 0 ]->toArray( );
-			$this->assertEquals( $statement, [
+			$this->assertEquals( [
 				'entity_id' => 'bea008dac1ea309d22e100ceb0a5f3a44db882fa',
 				'schema'    => 'PublicBody',
 				'prop'      => 'addressEntity',
 				'val'       => 'e89d23f9af7daa0cc6d11a5701d23cbc9084a444',
-			] );
+			], $statement );
 
 			$this->assertEquals( $statements[ 0 ]->toJson( ), json_encode( $statements[ 0 ] ) );
 			$this->assertEquals( json_decode( $statements[ 0 ]->toJson( ), true ), $statements[ 0 ]->toArray( ) );
@@ -56,9 +56,9 @@
 			$generator = new EntityStatementsGenerator;
 			$entity = $generator->pack( $statements, 'followthemoney/followthemoney/schema/' );
 
-			$this->assertEquals( $entity->getId( ), 'foobar' );
-			$this->assertEquals( $entity->getSchema( ), 'PublicBody' );
+			$this->assertEquals( 'foobar', $entity->getId( ) );
+			$this->assertEquals( 'PublicBody', $entity->getSchema( ) );
 
-			$this->assertEquals( $entity[ 'taxNumber' ], [ '20064120', '12345678' ] );
+			$this->assertEquals( [ '20064120', '12345678' ], $entity[ 'taxNumber' ] );
 		}
 	}
