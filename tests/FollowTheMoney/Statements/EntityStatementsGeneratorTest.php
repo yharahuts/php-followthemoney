@@ -57,7 +57,7 @@
 			$entity = $generator->pack( $statements, 'followthemoney/followthemoney/schema/' );
 
 			$this->assertEquals( 'foobar', $entity->getId( ) );
-			$this->assertEquals( 'PublicBody', $entity->getSchema( ) );
+			$this->assertEquals( 'PublicBody', $entity->getSchemaName( ) );
 
 			$this->assertEquals( [ '20064120', '12345678' ], $entity[ 'taxNumber' ] );
 		}

@@ -62,4 +62,23 @@
 			$actual_type = $entity->getPropertyType( $property );
 			$this->assertEquals( $type, $actual_type );
 		}
+
+		public function SchemaNameDataProvider( ) {
+			return [
+				'company'      => [ 'Company', 'Company', 'Company' ],
+				'bank account' => [ 'BankAccount', 'BankAccount', 'Bank account' ],
+			];
+		}
+
+		/**
+		 * @dataProvider SchemaNameDataProvider
+		 * @covers EntitySchema::getSchemaName()
+		 * @covers EntitySchema::getSchemaLabel()
+		 */
+		public function testEntitySchemaName( string $entity, string $schema_name, string $schema_label ) {
+			$entity = new EntitySchema( $entity, 'followthemoney/followthemoney/schema/' );
+
+			$this->assertSame( $schema_name, $entity->getSchemaName( ) );
+			$this->assertSame( $schema_label, $entity->getSchemaLabel( ) );
+		}
 	}

@@ -16,7 +16,7 @@
 				foreach( $values as $val ) {
 					$statements->add( )
 						->setId( $entity->getId( ) )
-						->setSchema( $entity->getSchema( ) )
+						->setSchema( $entity->getSchemaName( ) )
 						->setProp( $name )
 						->setValue( $val );
 				}

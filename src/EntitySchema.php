@@ -127,7 +127,7 @@
 		 * @param array $properties
 		 * @return $this
 		 */
-		public function setValues( $properties ) {
+		public function setValues( array $properties ) : EntitySchema {
 			foreach( $properties as $prop => $val ) {
 				$this->set( $prop, $val );
 			}
@@ -141,7 +141,7 @@
 		 * @param string|array $val
 		 * @return $this
 		 */
-		public function set( string $prop, $val ) {
+		public function set( string $prop, $val ) : EntitySchema {
 			if( !is_array( $val ) ) {
 				$val = [ $val ];
 			}
@@ -156,7 +156,7 @@
 		 * @param string|array $val
 		 * @return $this
 		 */
-		public function append( string $prop, $val ) {
+		public function append( string $prop, $val ) : EntitySchema {
 			if( !is_array( $val ) ) {
 				$val = [ $val ];
 			}
@@ -174,7 +174,7 @@
 		 * @param string|null $id
 		 * @return $this
 		 */
-		public function setId( ?string $id ) {
+		public function setId( ?string $id ) : EntitySchema {
 			$this->id = $id;
 			return $this;
 		}
@@ -182,8 +182,15 @@
 		/**
 		 * @return string
 		 */
-		public function getSchema( ) {
+		public function getSchemaName( ) : string {
 			return $this->entity;
+		}
+
+		/**
+		 * @return string
+		 */
+		public function getSchemaLabel( ) : string {
+			return $this->schema[ 'label' ];
 		}
 
 		/**
