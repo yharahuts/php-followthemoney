@@ -1,5 +1,6 @@
 {
     "name": "legless/php-followthemoney",
+    "description": "PHP library to work with Follow the Money entities",
     "type": "library",
     "require": {
         "php": ">=7.4",
@@ -21,5 +22,8 @@
         "psr-1": {
             "FollowTheMoney\\Tests\\": "tests"
         }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit --testdox --colors"
     }
 }
