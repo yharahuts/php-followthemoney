@@ -194,6 +194,13 @@
 		}
 
 		/**
+		 * @return string[]
+		 */
+		public function getFeaturedProperties( ) : array {
+			return $this->schema[ 'featured' ];
+		}
+
+		/**
 		 * Will return entity caption based on FtM mapping
 		 * In case every property is undefined - will return null.
 		 *
