@@ -12,14 +12,14 @@
 		protected $schema;
 
 		/** @var EntitySchema[] */
-		protected $parents = [ ];
+		protected array $parents = [ ];
 		/** @var EntityProperty[ ] */
 		protected $props = [ ];
 
 		/** @var string|null */
 		protected ?string $id = null;
 		/** @var array */
-		protected $values = [ ];
+		protected array $values = [ ];
 
 		/**
 		 * EntitySchema constructor.
@@ -63,7 +63,12 @@
 			}
 
 			foreach( $props as $name => $prop ) {
-				$this->props[ $name ] = new EntityProperty( $name, $prop[ 'label' ] ?? null );
+				$this->props[ $name ] = new EntityProperty(
+					$name,
+					$prop[ 'label' ] ?? null,
+					$prop[ 'description' ] ?? null,
+					$prop[ 'type' ] ?? null,
+				);
 			}
 		}
 
@@ -90,6 +95,31 @@
 		 */
 		public function properties( ) {
 			return $this->props;
+		}
+
+		/**
+		 * Return property label
+		 * @param string $property
+		 * @return string
+		 */
+		public function getPropertyLabel( string $property ) : string {
+			return $this->props[ $property ]->label ?? $property;
+		}
+
+		/**
+		 * @param string $property
+		 * @return string|null
+		 */
+		public function getPropertyDescription( string $property ) : ?string {
+			return $this->props[ $property ]->description ?? null;
+		}
+
+		/**
+		 * @param string $property
+		 * @return string|null
+		 */
+		public function getPropertyType( string $property ) : ?string {
+			return $this->props[ $property ]->type ?? null;
 		}
 
 		/**
