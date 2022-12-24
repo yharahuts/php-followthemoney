@@ -1,0 +1,13 @@
+{
+    "id": "ivan-sraka",
+    "properties": {
+        "name": [
+            "Іван Срака",
+            "Sraka Ivan"
+        ],
+        "email": [
+            "ivan@sraka.com"
+        ]
+    },
+    "schema": "Person"
+}

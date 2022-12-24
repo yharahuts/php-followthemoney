@@ -194,6 +194,29 @@
 		}
 
 		/**
+		 * Will return entity caption based on FtM mapping
+		 * In case every property is undefined - will return null.
+		 *
+		 * @return string|null
+		 */
+		public function getEntityCaption( ) : ?string {
+			$caption_properties = $this->schema[ 'caption' ] ?? [ ];
+
+			foreach( $caption_properties as $property ) {
+				$values = $this->values( )[ $property ] ?? [ ];
+
+				// return first non-empty value
+				foreach( $values as $val ) {
+					if( $val ) {
+						return $val;
+					}
+				}
+			}
+
+			return null;
+		}
+
+		/**
 		 * Return entity id
 		 * @return string|null
 		 */
@@ -213,10 +236,11 @@
 		/**
 		 * Returns all property values
 		 * @return array
+		 * @todo: return values for specified property
 		 */
 		public function values( ) {
 			return array_map( function ( $val ) {
 				return is_array( $val ) ? $val : [ $val ];
-			}, $this->values);
+			}, $this->values );
 		}
 	}

@@ -1,0 +1,37 @@
+{
+    "id": "bea008dac1ea309d22e100ceb0a5f3a44db882fa",
+    "properties": {
+        "addressEntity": [
+            "e89d23f9af7daa0cc6d11a5701d23cbc9084a444"
+        ],
+        "country": [
+            "ua"
+        ],
+        "incorporationDate": [
+            "1990"
+        ],
+        "jurisdiction": [
+            "ua"
+        ],
+        "mainCountry": [
+            "ua"
+        ],
+        "name": [
+            "ВРУ",
+            "Верховна Рада України"
+        ],
+        "phone": [
+            "+380442554246"
+        ],
+        "taxNumber": [
+            "20064120"
+        ],
+        "website": [
+            "https://www.rada.gov.ua/"
+        ],
+        "wikipediaUrl": [
+            "https://uk.wikipedia.org/wiki/Верховна_Рада_України"
+        ]
+    },
+    "schema": "PublicBody"
+}

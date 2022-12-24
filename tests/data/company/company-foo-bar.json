@@ -1,0 +1,9 @@
+{
+    "id": "foobar",
+    "properties": {
+        "name": [
+            "foo bar"
+        ]
+    },
+    "schema": "PublicBody"
+}
