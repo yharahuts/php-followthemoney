@@ -1,4 +1,6 @@
-/.idea/
+composer.phar
 /vendor/
-/.phpunit.cache/
-composer.lock
+/test/
+/.idea/
+/coverage/
+*.cache

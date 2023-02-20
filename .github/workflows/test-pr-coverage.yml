@@ -1,0 +1,55 @@
+name: Check PR test coverage
+
+on:
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  check-coverage:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+      matrix:
+        version: [ '8.0' ]
+
+    name: Check Coverage
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.version }}
+
+      - name: Install Follow the Money package
+        run: |
+          git submodule init
+          git submodule update
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ matrix.version }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ matrix.version }}-
+
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-progress --no-interaction
+
+      - name: Run tests
+        run: composer run test-coverage
+
+      - name: Coverage Report
+        if: github.event_name == 'pull_request'
+        uses: lucassabreu/comment-coverage-clover@v0.3.0
+        with:
+          file: ./coverage/clover.xml
+          github-token: ${{ secrets.GITHUB_TOKEN }}
