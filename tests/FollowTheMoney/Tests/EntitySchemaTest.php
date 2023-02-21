@@ -2,6 +2,7 @@
 namespace FollowTheMoney\Tests;
 
 use FollowTheMoney\EntitySchema;
+use FollowTheMoney\Exceptions\FtmException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -38,6 +39,46 @@ class EntitySchemaTest extends TestCase {
 
 		$entity->setId( 'foobar' );
 		$this->assertEquals( 'foobar', $entity->getId() );
+	}
+
+	/**
+	 * @covers \FollowTheMoney\EntitySchema::values()
+	 */
+	public function testEntityValues() {
+		$json = '{"id":"bea008dac1ea309d22e100ceb0a5f3a44db882fa","properties":{"name":["foo","bar"],"phone":["12345"]},"schema":"Company"}';
+		$entity = EntitySchema::fromJson( $json, 'followthemoney/followthemoney/schema/' );
+
+		$all_values = $entity->values();
+		$this->assertSame( [ 'name' => [ 'foo', 'bar' ], 'phone' => [ '12345' ] ], $all_values );
+
+		$name_values = $entity->values( 'name' );
+		$this->assertSame( [ 'foo', 'bar' ], $name_values );
+		$this->assertSame( $name_values, $all_values[ 'name' ] );
+
+		$phone_values = $entity->values( 'phone' );
+		$this->assertSame( [ '12345' ], $phone_values );
+	}
+
+	/**
+	 * @covers \FollowTheMoney\EntitySchema::values()
+	 */
+	public function testEntityValuesFromEmptyPropertyReturnsEmptyArray() {
+		$json = '{"id": "bea008dac1ea309d22e100ceb0a5f3a44db882fa", "properties": {"name": ["foo", "bar"]}, "schema": "Company"}';
+		$entity = EntitySchema::fromJson( $json, 'followthemoney/followthemoney/schema/' );
+
+		$array = $entity->values( 'phone' );
+		$this->assertSame( [ ], $array );
+	}
+
+	/**
+	 * @covers \FollowTheMoney\EntitySchema::values()
+	 */
+	public function testEntityValuesFromUndefinedPropertyThrowsException() {
+		$json = '{"id": "bea008dac1ea309d22e100ceb0a5f3a44db882fa", "properties": {"name": ["foo", "bar"]}, "schema": "Company"}';
+		$entity = EntitySchema::fromJson( $json, 'followthemoney/followthemoney/schema/' );
+
+		$this->expectException( FtmException::class );
+		$entity->values( 'foo_bar' );
 	}
 
 	/**
