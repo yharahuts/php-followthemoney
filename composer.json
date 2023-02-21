@@ -3,7 +3,7 @@
     "description": "PHP library to work with Follow the Money entities",
     "type": "library",
     "require": {
-        "php": ">=7.4",
+        "php": ">=8.0",
         "ext-yaml": "*",
         "ext-json": "*"
     },
@@ -11,7 +11,11 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require-dev": {
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9.5.10",
+        "friendsofphp/php-cs-fixer": "~3.13",
+        "tareq1988/wp-php-cs-fixer": "dev-master",
+        "legless/space-inside-array-braces-fixer": "dev-master",
+        "vimeo/psalm": "5.x-dev"
     },
     "autoload": {
         "psr-4": {
@@ -24,6 +28,10 @@
         }
     },
     "scripts": {
-        "test": "vendor/bin/phpunit --testdox --colors"
+        "test": "vendor/bin/phpunit --no-coverage --colors=always",
+        "test-coverage": "vendor/bin/phpunit --colors=always",
+        "format": "vendor/bin/php-cs-fixer fix",
+        "format-check": "vendor/bin/php-cs-fixer fix --dry-run",
+        "psalm": "vendor/bin/psalm"
     }
 }

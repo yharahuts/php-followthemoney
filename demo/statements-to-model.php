@@ -1,17 +1,18 @@
 <?php
+
 	require 'vendor/autoload.php';
 
-	$generator = new \FollowTheMoney\Statements\EntityStatementsGenerator( );
-	$bag = new \FollowTheMoney\Statements\EntityStatementBag( );
+	$generator = new \FollowTheMoney\Statements\EntityStatementsGenerator();
+	$bag = new \FollowTheMoney\Statements\EntityStatementBag();
 
-	while( true ) {
+	while ( true ) {
 		$line = trim( fgets( STDIN ) );
-		if( !$line ) {
-			break ;
+		if ( !$line ) {
+			break;
 		}
 
 		$statement = \FollowTheMoney\Statements\EntityStatement::fromJson( $line );
 		$bag->append( $statement );
 	}
 
-	echo $generator->pack( $bag, 'followthemoney/followthemoney/schema/' )->toJson( );
+	echo $generator->pack( $bag, 'followthemoney/followthemoney/schema/' )->toJson();
