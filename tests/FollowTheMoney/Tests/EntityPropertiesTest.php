@@ -1,13 +1,16 @@
 <?php
-namespace FollowTheMoney\Tests;
+namespace Tests\FollowTheMoney\Tests;
 
 use FollowTheMoney\EntitySchema;
 use PHPUnit\Framework\TestCase;
+use Tests\Support\SchemaRepositoryAware;
 
 /**
  * @internal
  */
-class EntityPropertiesTest extends TestCase {
+final class EntityPropertiesTest extends TestCase {
+	use SchemaRepositoryAware;
+
 	public function LabelDataProvider() {
 		return [
 			[ 'id', 'id' ],
@@ -22,7 +25,7 @@ class EntityPropertiesTest extends TestCase {
 	 * @covers \FollowTheMoney\EntitySchema::getPropertyLabel()
 	 */
 	public function testEntityPropertyLabels( string $property, string $label ) {
-		$entity = new EntitySchema( 'Company', 'followthemoney/followthemoney/schema/' );
+		$entity = new EntitySchema( 'Company', $this->getRegistry() );
 
 		$actual_label = $entity->getPropertyLabel( $property );
 		$this->assertEquals( $label, $actual_label );
@@ -42,7 +45,7 @@ class EntityPropertiesTest extends TestCase {
 	 * @covers \FollowTheMoney\EntitySchema::getPropertyDescription()
 	 */
 	public function testEntityPropertyDescriptions( string $property, ?string $descr ) {
-		$entity = new EntitySchema( 'Company', 'followthemoney/followthemoney/schema/' );
+		$entity = new EntitySchema( 'Company', $this->getRegistry() );
 
 		$actual_descr = $entity->getPropertyDescription( $property );
 		$this->assertEquals( $descr, $actual_descr );
@@ -63,7 +66,7 @@ class EntityPropertiesTest extends TestCase {
 	 * @covers \FollowTheMoney\EntitySchema::getPropertyType()
 	 */
 	public function testEntityPropertyTypes( string $property, ?string $type ) {
-		$entity = new EntitySchema( 'Person', 'followthemoney/followthemoney/schema/' );
+		$entity = new EntitySchema( 'Person', $this->getRegistry() );
 
 		$actual_type = $entity->getPropertyType( $property );
 		$this->assertEquals( $type, $actual_type );
@@ -83,7 +86,7 @@ class EntityPropertiesTest extends TestCase {
 	 * @covers \FollowTheMoney\EntitySchema::getSchemaName()
 	 */
 	public function testEntitySchemaName( string $entity, string $schema_name, string $schema_label ) {
-		$entity = new EntitySchema( $entity, 'followthemoney/followthemoney/schema/' );
+		$entity = new EntitySchema( $entity, $this->getRegistry() );
 
 		$this->assertSame( $schema_name, $entity->getSchemaName() );
 		$this->assertSame( $schema_label, $entity->getSchemaLabel() );

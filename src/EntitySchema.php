@@ -2,6 +2,7 @@
 namespace FollowTheMoney;
 
 use FollowTheMoney\Exceptions\FtmException;
+use FollowTheMoney\Schema\SchemaRegistryInterface;
 
 /**
  * @template-implements \IteratorAggregate<array>
@@ -11,8 +12,8 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	use EntitySchemaArrayTrait;
 	use EntitySchemaFromToTrait;
 
-	/** @var string */
-	protected string $dir;
+	/** @var SchemaRegistryInterface */
+	protected SchemaRegistryInterface $registry;
 
 	/** @var string */
 	protected string $entity;
@@ -36,21 +37,13 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	 * EntitySchema constructor.
 	 *
 	 * @param string $schema
-	 * @param string $dir
+	 * @param SchemaRegistryInterface $registry
 	 */
-	public function __construct( string $schema, string $dir ) {
+	public function __construct( string $schema, SchemaRegistryInterface $registry ) {
 		$this->entity = $schema;
-		$this->dir = $dir;
+		$this->registry = $registry;
 
-		// todo: create schema provider factory class, and don't read yamls here
-		$filename = "{$this->dir}/{$this->entity}.yaml";
-
-		if ( !file_exists( $filename ) ) {
-			throw new FtmException( "No definitions file for schema {$schema} exists in {$dir}" );
-		}
-
-		$yaml = yaml_parse_file( $filename );
-		$this->schema = $yaml[ $schema ];
+		$this->schema = $registry->get( $schema );
 
 		$this->loadParentSchemas();
 		$this->initProperties();
@@ -314,11 +307,11 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	 */
 	private function loadParentSchemas() {
 		if ( $this->entity !== 'Thing' ) {
-			$this->parents[ ] = new static( 'Thing', $this->dir );
+			$this->parents[ ] = new static( 'Thing', $this->registry );
 		}
 
 		foreach ( $this->extends() as $entity_name ) {
-			$this->parents[ $entity_name ] = new static( $entity_name, $this->dir );
+			$this->parents[ $entity_name ] = new static( $entity_name, $this->registry );
 		}
 	}
 

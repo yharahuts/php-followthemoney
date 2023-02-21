@@ -2,6 +2,7 @@
 namespace FollowTheMoney;
 
 use FollowTheMoney\Exceptions\FtmException;
+use FollowTheMoney\Schema\SchemaRegistryInterface;
 
 trait EntitySchemaFromToTrait {
 	/** {@inheritDoc} */
@@ -13,13 +14,13 @@ trait EntitySchemaFromToTrait {
 	 * Init entity from json.
 	 *
 	 * @param string $json
-	 * @param string $dir
+	 * @param SchemaRegistryInterface $registry
 	 *
 	 * @return static
 	 *
 	 * @throws FtmException
 	 */
-	public static function fromJson( string $json, string $dir ) : static {
+	public static function fromJson( string $json, SchemaRegistryInterface $registry ) : static {
 		$array = json_decode( $json, true );
 
 		if ( $array === null ) {
@@ -32,14 +33,18 @@ trait EntitySchemaFromToTrait {
 			throw new FtmException( 'Decoded json is a scalar value' );
 		}
 
-		return static::fromArray( $array, $dir );
+		return static::fromArray( $array, $registry );
 	}
 
 	/**
 	 * @param array $array
-	 * @param string $dir
+	 * @param SchemaRegistryInterface $registry
+	 *
+	 * @return EntitySchema
+	 *
+	 * @throws FtmException
 	 */
-	public static function fromArray( array $array, string $dir ) : static {
+	public static function fromArray( array $array, SchemaRegistryInterface $registry ) : EntitySchema {
 		if ( !isset( $array[ 'schema' ] ) ) {
 			throw new FtmException( 'No schema property in array' );
 		}
@@ -52,9 +57,13 @@ trait EntitySchemaFromToTrait {
 			throw new FtmException( 'No properties in array' );
 		}
 
-		$entity = new static( $array[ 'schema' ], $dir );
-		$entity->setId( $array[ 'id' ] );
-		$entity->setValues( $array[ 'properties' ] );
+		try {
+			$entity = new EntitySchema( $array[ 'schema' ], $registry );
+			$entity->setId( $array[ 'id' ] );
+			$entity->setValues( $array[ 'properties' ] );
+		} catch ( \Throwable $e ) {
+			throw new FtmException( "Can't create entity: ".$e->getMessage(), 0, $e );
+		}
 
 		return $entity;
 	}

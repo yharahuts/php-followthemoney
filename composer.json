@@ -23,8 +23,8 @@
         }
     },
     "autoload-dev": {
-        "psr-1": {
-            "FollowTheMoney\\Tests\\": "tests"
+        "psr-4": {
+            "Tests\\": "tests"
         }
     },
     "scripts": {

@@ -1,7 +1,8 @@
 <?php
-namespace FollowTheMoney\Statements;
+namespace Tests\FollowTheMoney\Statements;
 
 use FollowTheMoney\Exceptions\StatementException;
+use FollowTheMoney\Statements\EntityStatementBag;
 use PHPUnit\Framework\TestCase;
 
 /**
