@@ -1,13 +1,16 @@
 <?php
-namespace FollowTheMoney\Tests;
+namespace Tests\FollowTheMoney\Tests;
 
 use FollowTheMoney\EntitySchema;
 use PHPUnit\Framework\TestCase;
+use Tests\Support\SchemaRepositoryAware;
 
 /**
  * @internal
  */
 final class EntityCaptionsTest extends TestCase {
+	use SchemaRepositoryAware;
+
 	public function CaptionsDataProvider() : array {
 		return [
 			'company-20064120'        => [ 'company/company-20064120.json', 'ВРУ' ],
@@ -28,7 +31,7 @@ final class EntityCaptionsTest extends TestCase {
 	public function testEntityCaptions( string $json_file, ?string $expected_caption ) {
 		$json = file_get_contents( "tests/data/{$json_file}" );
 
-		$entity = EntitySchema::fromJson( $json, 'followthemoney/followthemoney/schema/' );
+		$entity = EntitySchema::fromJson( $json, $this->getRegistry() );
 		$this->assertSame( $expected_caption, $entity->getEntityCaption() );
 	}
 
@@ -47,7 +50,7 @@ final class EntityCaptionsTest extends TestCase {
 	public function testEntityCaptionPropertiesNames( string $json_file, array $expected_properties ) {
 		$json = file_get_contents( "tests/data/{$json_file}" );
 
-		$entity = EntitySchema::fromJson( $json, 'followthemoney/followthemoney/schema/' );
+		$entity = EntitySchema::fromJson( $json, $this->getRegistry() );
 		$this->assertSame( $expected_properties, $entity->getCaptionPropertiesNames() );
 	}
 
@@ -66,7 +69,7 @@ final class EntityCaptionsTest extends TestCase {
 	public function testEntityCaptionPropertiesValues( string $json_file, array $expected_values ) {
 		$json = file_get_contents( "tests/data/{$json_file}" );
 
-		$entity = EntitySchema::fromJson( $json, 'followthemoney/followthemoney/schema/' );
+		$entity = EntitySchema::fromJson( $json, $this->getRegistry() );
 		$this->assertSame( $expected_values, $entity->getCaptionValues() );
 	}
 }

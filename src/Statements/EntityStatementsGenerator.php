@@ -3,6 +3,7 @@ namespace FollowTheMoney\Statements;
 
 use FollowTheMoney\EntitySchema;
 use FollowTheMoney\Exceptions\StatementException;
+use FollowTheMoney\Schema\SchemaRegistryInterface;
 
 class EntityStatementsGenerator {
 	/**
@@ -29,14 +30,13 @@ class EntityStatementsGenerator {
 
 	/**
 	 * @param EntityStatementBag $bag
-	 * @param string $dir
+	 * @param SchemaRegistryInterface $registry
 	 *
 	 * @return EntitySchema
 	 *
 	 * @throws StatementException
-	 * @throws \FollowTheMoney\Exceptions\FtmException
 	 */
-	public function pack( EntityStatementBag $bag, string $dir ) {
+	public function pack( EntityStatementBag $bag, SchemaRegistryInterface $registry ) {
 		if ( !$bag->count() ) {
 			throw new StatementException( 'Empty statements list' );
 		}
@@ -44,7 +44,7 @@ class EntityStatementsGenerator {
 		// todo: find most top-level entity schema for all statements,
 		//       i.e. having statements for Thing, LegalEntity and Company, we need to create a Company entity
 		$schema = $bag[ 0 ]->getSchema();
-		$entity = new EntitySchema( $schema, $dir );
+		$entity = new EntitySchema( $schema, $registry );
 
 		// todo: use canonical_id in case of merged entities ?
 		$id = $bag[ 0 ]->getEntityId();

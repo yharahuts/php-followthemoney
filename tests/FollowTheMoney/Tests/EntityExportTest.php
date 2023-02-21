@@ -1,13 +1,16 @@
 <?php
-namespace FollowTheMoney\Tests;
+namespace Tests\FollowTheMoney\Tests;
 
 use FollowTheMoney\EntitySchema;
 use PHPUnit\Framework\TestCase;
+use Tests\Support\SchemaRepositoryAware;
 
 /**
  * @internal
  */
 final class EntityExportTest extends TestCase {
+	use SchemaRepositoryAware;
+
 	/**
 	 * @covers \FollowTheMoney\EntitySchema::toArray
 	 */
@@ -38,6 +41,6 @@ final class EntityExportTest extends TestCase {
 	protected function getEntity() : EntitySchema {
 		$json = '{"id": "bea008dac1ea309d22e100ceb0a5f3a44db882fa", "properties": {"name": ["foo"]}, "schema": "Company"}';
 
-		return EntitySchema::fromJson( $json, 'followthemoney/followthemoney/schema/' );
+		return EntitySchema::fromJson( $json, $this->getRegistry() );
 	}
 }

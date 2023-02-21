@@ -1,13 +1,16 @@
 <?php
-namespace FollowTheMoney\Tests;
+namespace Tests\FollowTheMoney\Tests;
 
 use FollowTheMoney\EntitySchema;
 use PHPUnit\Framework\TestCase;
+use Tests\Support\SchemaRepositoryAware;
 
 /**
  * @internal
  */
 class EntityFeaturedPropertiesTest extends TestCase {
+	use SchemaRepositoryAware;
+
 	public function FeaturedPropertiesProvider() {
 		return [
 			'Company' => [ 'Company', [ 'name', 'jurisdiction', 'registrationNumber', 'incorporationDate' ] ],
@@ -22,7 +25,7 @@ class EntityFeaturedPropertiesTest extends TestCase {
 	 * @covers \FollowTheMoney\EntitySchema::getFeaturedProperties
 	 */
 	public function testEntityFeaturedProperties( string $schema, array $expected_properties ) {
-		$entity = new EntitySchema( $schema, 'followthemoney/followthemoney/schema/' );
+		$entity = new EntitySchema( $schema, $this->getRegistry() );
 
 		$this->assertEquals( $entity->getFeaturedProperties(), $expected_properties );
 	}
