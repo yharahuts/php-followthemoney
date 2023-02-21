@@ -7,8 +7,8 @@ use PHPUnit\Framework\TestCase;
 /**
  * @internal
  */
-class EntityCaptionsTest extends TestCase {
-	public function CaptionsDataProvider() {
+final class EntityCaptionsTest extends TestCase {
+	public function CaptionsDataProvider() : array {
 		return [
 			'company-20064120'        => [ 'company/company-20064120.json', 'ВРУ' ],
 			'company-foo-bar'         => [ 'company/company-foo-bar.json', 'foo bar' ],
@@ -30,5 +30,43 @@ class EntityCaptionsTest extends TestCase {
 
 		$entity = EntitySchema::fromJson( $json, 'followthemoney/followthemoney/schema/' );
 		$this->assertSame( $expected_caption, $entity->getEntityCaption() );
+	}
+
+	public function CaptionPropertiesNamesProvider() : array {
+		return [
+			'company-20064120'  => [ 'company/company-20064120.json', [ 'name' ] ],
+			'person-ivan-sraka' => [ 'etc/person-ivan-sraka.json', [ 'name', 'lastName', 'email', 'phone' ] ],
+		];
+	}
+
+	/**
+	 * @dataProvider  CaptionPropertiesNamesProvider
+	 *
+	 * @covers \FollowTheMoney\EntitySchema::getCaptionPropertiesNames
+	 */
+	public function testEntityCaptionPropertiesNames( string $json_file, array $expected_properties ) {
+		$json = file_get_contents( "tests/data/{$json_file}" );
+
+		$entity = EntitySchema::fromJson( $json, 'followthemoney/followthemoney/schema/' );
+		$this->assertSame( $expected_properties, $entity->getCaptionPropertiesNames() );
+	}
+
+	public function CaptionPropertiesValuesProvider() : array {
+		return [
+			'company-20064120'  => [ 'company/company-20064120.json', [ 'name' => [ 'ВРУ', 'Верховна Рада України' ] ] ],
+			'person-ivan-sraka' => [ 'etc/person-ivan-sraka.json', [ 'name' => [ 'Іван Срака', 'Sraka Ivan' ], 'email' => [ 'ivan@sraka.com' ] ] ],
+		];
+	}
+
+	/**
+	 * @dataProvider  CaptionPropertiesValuesProvider
+	 *
+	 * @covers \FollowTheMoney\EntitySchema::getCaptionValues
+	 */
+	public function testEntityCaptionPropertiesValues( string $json_file, array $expected_values ) {
+		$json = file_get_contents( "tests/data/{$json_file}" );
+
+		$entity = EntitySchema::fromJson( $json, 'followthemoney/followthemoney/schema/' );
+		$this->assertSame( $expected_values, $entity->getCaptionValues() );
 	}
 }

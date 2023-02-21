@@ -191,22 +191,52 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getCaptionPropertiesNames() : array {
+		return $this->schema[ 'caption' ] ?? [ ];
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getCaptionValues() : array {
+		$props = $this->getCaptionPropertiesNames();
+		$result = [ ];
+
+		foreach ( $props as $property ) {
+			$values = $this->values( $property );
+
+			if ( !count( $values ) ) {
+				continue;
+			}
+
+			$result[ $property ] = $values;
+		}
+
+		return $result;
+	}
+
+	/**
 	 * Will return entity caption based on FtM mapping
 	 * In case every property is undefined - will return null.
 	 *
 	 * @return string|null
 	 */
 	public function getEntityCaption() : ?string {
-		$caption_properties = $this->schema[ 'caption' ] ?? [ ];
+		$values = $this->getCaptionValues();
+		$values = array_shift( $values );
 
-		foreach ( $caption_properties as $property ) {
-			$values = $this->values()[ $property ] ?? [ ];
+		if ( empty( $values ) ) {
+			return null;
+		}
 
-			// return first non-empty value
-			foreach ( $values as $val ) {
-				if ( $val ) {
-					return $val;
-				}
+		foreach ( $values as $value ) {
+			// return first non-empty value for multi-valued props
+			// e.g. in case of empty strings in props
+
+			if ( !empty( $value ) ) {
+				return $value;
 			}
 		}
 
@@ -218,7 +248,7 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	 *
 	 * @return string|null
 	 */
-	public function getId() {
+	public function getId() : ?string {
 		return $this->id;
 	}
 
@@ -236,14 +266,16 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	/**
 	 * Returns all property values.
 	 *
-	 * @return array
+	 * @param string|null $property
 	 *
-	 * @todo: return values for specified property
+	 * @return array
 	 */
-	public function values() {
-		return array_map( function ( $val ) {
-			return is_array( $val ) ? $val : [ $val ];
-		}, $this->values );
+	public function values( ?string $property = null ) : array {
+		if ( is_string( $property ) ) {
+			return $this->getPropertyValues( $property );
+		}
+
+		return array_map( fn ( $val ) => is_array( $val ) ? $val : [ $val ], $this->values );
 	}
 
 	/**
@@ -251,10 +283,29 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	 *
 	 * @return array
 	 */
-	protected function getSchemaProp( string $prop ) {
+	protected function getSchemaProp( string $prop ) : array {
 		$value = $this->schema[ $prop ] ?? [ ];
 
 		return is_array( $value ) ? $value : [ $value ];
+	}
+
+	/**
+	 * @param string $property
+	 *
+	 * @return array
+	 *
+	 * @throws FtmException
+	 */
+	private function getPropertyValues( string $property ) : array {
+		if ( !isset( $this->props[ $property ] ) ) {
+			throw new FtmException( "No property {$property} is defined for schema" );
+		}
+
+		if ( empty( $this->values[ $property ] ) ) {
+			return [ ];
+		}
+
+		return $this->values[ $property ];
 	}
 
 	/**
