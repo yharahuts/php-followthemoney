@@ -276,7 +276,7 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	 *
 	 * @return array
 	 */
-	protected function getSchemaProp( string $prop ) : array {
+	public function getSchemaProp( string $prop ) : array {
 		$value = $this->schema[ $prop ] ?? [ ];
 
 		return is_array( $value ) ? $value : [ $value ];
