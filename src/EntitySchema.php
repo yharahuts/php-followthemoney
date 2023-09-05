@@ -2,6 +2,7 @@
 namespace FollowTheMoney;
 
 use FollowTheMoney\Exceptions\FtmException;
+use FollowTheMoney\IdGenerator\EntityIdGeneratorInterface;
 use FollowTheMoney\Schema\SchemaRegistryInterface;
 
 /**
@@ -32,6 +33,9 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 
 	/** @var array */
 	protected array $values = [ ];
+
+	/** @var EntityIdGeneratorInterface|null */
+	protected ?EntityIdGeneratorInterface $id_generator = null;
 
 	/**
 	 * EntitySchema constructor.
@@ -239,10 +243,18 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	/**
 	 * Return entity id.
 	 *
-	 * @return string|null
+	 * @return string
 	 */
-	public function getId() : ?string {
-		return $this->id;
+	public function getId() : string {
+		if ( !is_null( $this->id ) ) {
+			return $this->id;
+		}
+
+		if ( !is_null( $this->id_generator ) ) {
+			return $this->id_generator->generate( $this );
+		}
+
+		throw new FtmException( 'No entity_id and no generator is set for entity' );
 	}
 
 	/**
@@ -282,6 +294,12 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 		$value = $this->schema[ $prop ] ?? [ ];
 
 		return is_array( $value ) ? $value : [ $value ];
+	}
+
+	public function setIdGenerator( EntityIdGeneratorInterface $id_generator ) : static {
+		$this->id_generator = $id_generator;
+
+		return $this;
 	}
 
 	/**
