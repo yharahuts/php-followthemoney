@@ -17,7 +17,7 @@ class EntityStatementsGenerator {
 		foreach ( $entity->values() as $name => $values ) {
 			foreach ( $values as $val ) {
 				$statements->add()
-					->setId( $entity->getId() )
+					->setEntityId( $entity->getId() )
 					->setSchema( $entity->getSchemaName() )
 					->setProp( $name )
 					->setValue( $val )

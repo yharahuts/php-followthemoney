@@ -16,7 +16,7 @@ class EntityStatementBag implements \IteratorAggregate, \Countable, \ArrayAccess
 	 *
 	 * @return EntityStatement
 	 */
-	public function add() {
+	public function add() : EntityStatement {
 		$statement = new EntityStatement();
 		$this->list[ ] = $statement;
 

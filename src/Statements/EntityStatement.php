@@ -8,6 +8,9 @@ use FollowTheMoney\Exceptions\StatementException;
  */
 class EntityStatement implements \JsonSerializable {
 	/** @var string */
+	protected string $statement_id;
+
+	/** @var string */
 	protected string $entity_id;
 
 	/** @var string */
@@ -24,7 +27,7 @@ class EntityStatement implements \JsonSerializable {
 	 *
 	 * @return $this
 	 */
-	public function setId( string $entity_id ) : static {
+	public function setEntityId( string $entity_id ) : static {
 		$this->entity_id = $entity_id;
 
 		return $this;
@@ -35,7 +38,7 @@ class EntityStatement implements \JsonSerializable {
 	 *
 	 * @return $this
 	 */
-	public function setSchema( string $schema ) {
+	public function setSchema( string $schema ) : static {
 		$this->schema = $schema;
 
 		return $this;
@@ -53,7 +56,7 @@ class EntityStatement implements \JsonSerializable {
 	 *
 	 * @return $this
 	 */
-	public function setProp( $prop ) {
+	public function setProp( $prop ) : static {
 		$this->prop = $prop;
 
 		return $this;
@@ -64,7 +67,7 @@ class EntityStatement implements \JsonSerializable {
 	 *
 	 * @return $this
 	 */
-	public function setValue( $val ) {
+	public function setValue( $val ) : static {
 		$this->val = $val;
 
 		return $this;
@@ -73,8 +76,14 @@ class EntityStatement implements \JsonSerializable {
 	/**
 	 * @return array
 	 */
-	public function toArray() {
+	public function toArray() : array {
+		if ( !isset( $this->statement_id ) ) {
+			// this smells bad
+			$this->regenerateStatementId();
+		}
+
 		return [
+			'id'        => $this->statement_id,
 			'entity_id' => $this->entity_id,
 			'schema'    => $this->schema,
 			'prop'      => $this->prop,
@@ -87,7 +96,7 @@ class EntityStatement implements \JsonSerializable {
 	 *
 	 * @return string
 	 */
-	public function toJson( $flags = JSON_UNESCAPED_UNICODE ) {
+	public function toJson( $flags = JSON_UNESCAPED_UNICODE ) : string {
 		return json_encode( $this->toArray(), $flags );
 	}
 
@@ -103,7 +112,7 @@ class EntityStatement implements \JsonSerializable {
 	 *
 	 * @throws StatementException
 	 */
-	public static function fromJson( string $json ) {
+	public static function fromJson( string $json ) : EntityStatement {
 		$array = json_decode( $json, true );
 
 		if ( json_last_error() !== 0 ) {
@@ -120,19 +129,27 @@ class EntityStatement implements \JsonSerializable {
 	 *
 	 * @throws StatementException
 	 */
-	public static function fromArray( array $array ) {
+	public static function fromArray( array $array ) : EntityStatement {
 		$item = new static();
 
 		try {
-			return $item
-				->setId( $array[ 'entity_id' ] )
+			$item
+				->setEntityId( $array[ 'entity_id' ] )
 				->setValue( $array[ 'val' ] )
 				->setProp( $array[ 'prop' ] )
 				->setSchema( $array[ 'schema' ] )
 			;
+
+			if ( !empty( $array[ 'id' ] ) ) {
+				$item->setId( $array[ 'id' ] );
+			} else {
+				$item->regenerateStatementId();
+			}
 		} catch ( \Throwable $e ) {
 			throw new StatementException( 'Failed to init statement: '.$e->getMessage(), 0, $e );
 		}
+
+		return $item;
 	}
 
 	/**
@@ -154,5 +171,35 @@ class EntityStatement implements \JsonSerializable {
 	 */
 	public function getValue() : string {
 		return $this->val;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getId() : string {
+		return $this->statement_id;
+	}
+
+	/**
+	 * @param string $statement_id
+	 *
+	 * @return $this
+	 */
+	public function setId( string $statement_id ) : static {
+		$this->statement_id = $statement_id;
+
+		return $this;
+	}
+
+	/**
+	 * @return $this
+	 */
+	public function regenerateStatementId() : static {
+		// todo: allow custom generators
+
+		$key = "entity.{$this->entity_id}.{$this->prop}.{$this->val}";
+		$this->statement_id = sha1( $key );
+
+		return $this;
 	}
 }

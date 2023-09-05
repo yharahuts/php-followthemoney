@@ -18,6 +18,18 @@ class EntityStatementTest extends TestCase {
 	}
 
 	/**
+	 * @covers \FollowTheMoney\Statements\EntityStatement
+	 *
+	 * @dataProvider StatementsProvider
+	 */
+	public function testStatementMustHaveItsIdGenerated( string $statement_json, string $expected_id ) {
+		$statement = EntityStatement::fromJson( $statement_json );
+		$actual_id = $statement->getId();
+
+		$this->assertSame( $expected_id, $actual_id );
+	}
+
+	/**
 	 * @covers \FollowTheMoney\Statements\EntityStatement::fromJson
 	 *
 	 * @dataProvider BrokenJsonProvider
@@ -34,6 +46,23 @@ class EntityStatementTest extends TestCase {
 
 		yield 'invalid entity schema' => [
 			'json' => '{"entity_id":"bea008dac1ea309d22e100ceb0a5f3a44db882fa","schema":"PublicBody"}',
+		];
+	}
+
+	public function StatementsProvider() : \Generator {
+		yield 'json with statement id' => [
+			'json'        => '{"id":"foobar","entity_id":"bea008dac1ea309d22e100ceb0a5f3a44db882fa","schema":"PublicBody","prop":"country","val":"ua"}',
+			'expected_id' => 'foobar',
+		];
+
+		yield 'json without statement id' => [
+			'json'        => '{"entity_id":"bea008dac1ea309d22e100ceb0a5f3a44db882fa","schema":"PublicBody","prop":"country","val":"ua"}',
+			'expected_id' => 'a01c4157b3c785ba64fba019ba5a97632457fde2',
+		];
+
+		yield 'json with empty statement id' => [
+			'json'        => '{"id":"","entity_id":"bea008dac1ea309d22e100ceb0a5f3a44db882fa","schema":"PublicBody","prop":"country","val":"ua"}',
+			'expected_id' => 'a01c4157b3c785ba64fba019ba5a97632457fde2',
 		];
 	}
 }
