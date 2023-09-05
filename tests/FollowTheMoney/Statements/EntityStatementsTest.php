@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @internal
  */
-class EntityStatementTest extends TestCase {
+class EntityStatementsTest extends TestCase {
 	/**
 	 * @covers \FollowTheMoney\Statements\EntityStatement::fromJson
 	 */

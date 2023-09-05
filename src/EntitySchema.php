@@ -115,11 +115,11 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	 * Set (overwrite) property value.
 	 *
 	 * @param string $prop
-	 * @param array|string $val
+	 * @param string|string[] $val
 	 *
 	 * @return $this
 	 */
-	public function set( string $prop, $val ) : EntitySchema {
+	public function set( string $prop, array|string $val ) : EntitySchema {
 		if ( !is_array( $val ) ) {
 			$val = [ $val ];
 		}
@@ -133,11 +133,11 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	 * Append value to property.
 	 *
 	 * @param string $prop
-	 * @param array|string $val
+	 * @param string|string[] $val
 	 *
 	 * @return $this
 	 */
-	public function append( string $prop, $val ) : EntitySchema {
+	public function append( string $prop, array|string $val ) : EntitySchema {
 		if ( !is_array( $val ) ) {
 			$val = [ $val ];
 		}
@@ -250,9 +250,9 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	 *
 	 * @param string $prop
 	 *
-	 * @return mixed|null
+	 * @return mixed
 	 */
-	public function get( string $prop ) {
+	public function get( string $prop ) : mixed {
 		return $this->values[ $prop ] ?? null;
 	}
 
@@ -262,6 +262,8 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	 * @param string|null $property
 	 *
 	 * @return array
+	 *
+	 * @throws FtmException
 	 */
 	public function values( ?string $property = null ) : array {
 		if ( is_string( $property ) ) {

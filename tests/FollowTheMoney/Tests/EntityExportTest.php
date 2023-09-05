@@ -14,7 +14,7 @@ final class EntityExportTest extends TestCase {
 	/**
 	 * @covers \FollowTheMoney\EntitySchema::toArray
 	 */
-	public function testExportToArray() {
+	public function testExportEntityToArray() {
 		$entity = $this->getEntity();
 
 		$this->assertIsArray( $entity->toArray() );
@@ -27,7 +27,7 @@ final class EntityExportTest extends TestCase {
 	 * @covers \FollowTheMoney\EntitySchema::jsonSerialize
 	 * @covers \FollowTheMoney\EntitySchema::toJson
 	 */
-	public function testExportToJson() {
+	public function testExportEntityToJson() {
 		$entity = $this->getEntity();
 
 		$json = json_decode( $entity->toJson() );
