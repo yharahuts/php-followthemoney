@@ -11,7 +11,7 @@ class EntityStatementsGenerator {
 	 *
 	 * @return EntityStatementBag
 	 */
-	public function unpack( EntitySchema $entity ) {
+	public function unpack( EntitySchema $entity ) : EntityStatementBag {
 		$statements = new EntityStatementBag();
 
 		foreach ( $entity->values() as $name => $values ) {
@@ -36,7 +36,7 @@ class EntityStatementsGenerator {
 	 *
 	 * @throws StatementException
 	 */
-	public function pack( EntityStatementBag $bag, SchemaRegistryInterface $registry ) {
+	public function pack( EntityStatementBag $bag, SchemaRegistryInterface $registry ) : EntitySchema {
 		if ( !$bag->count() ) {
 			throw new StatementException( 'Empty statements list' );
 		}
@@ -51,7 +51,7 @@ class EntityStatementsGenerator {
 		$entity->setId( $id );
 
 		foreach ( $bag as $statement ) {
-			// @var EntityStatement $statement
+			/** @var EntityStatement $statement */
 			$entity->append( $statement->getPropertyName(), $statement->getValue() );
 		}
 

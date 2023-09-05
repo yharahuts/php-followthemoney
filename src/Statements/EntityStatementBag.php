@@ -80,7 +80,7 @@ class EntityStatementBag implements \IteratorAggregate, \Countable, \ArrayAccess
 	 *
 	 * @return string
 	 */
-	public function toJson( $flags = JSON_UNESCAPED_UNICODE ) : string {
+	public function toJson( int $flags = JSON_UNESCAPED_UNICODE ) : string {
 		$statements = array_map( function ( $item ) use ( $flags ) {
 			return $item->toJson( $flags );
 		}, $this->list );
