@@ -5,7 +5,6 @@ require_once __DIR__ . '/vendor/legless/space-inside-array-braces-fixer/src/Spac
 $finder = PhpCsFixer\Finder::create()
 	->exclude( 'vendor' )
 	->exclude( 'bin' )
-	->exclude( 'app/Views/' )
 	->in( __DIR__ );
 
 $config = new PhpCsFixer\Config();
@@ -47,11 +46,11 @@ return $config
 			'null_adjustment' => 'always_last',
 			'sort_algorithm'  => 'alpha',
 		],
+		'phpdoc_to_comment'                   => [ 'ignored_tags' => [ 'var', 'todo', 'psalm-suppress' ] ],
 		'combine_consecutive_issets'          => false,
 		'no_leading_namespace_whitespace'     => false,
 		'no_superfluous_phpdoc_tags'          => false,
-		'no_blank_lines_before_namespace'     => true,
-		'single_blank_line_before_namespace'  => false,
+		'blank_lines_before_namespace'        => [ 'min_line_breaks' => 1, 'max_line_breaks' => 1 ],
 		'php_unit_test_class_requires_covers' => false,
 		'WeDevs/space_inside_parenthesis'     => true,
 		'Legls/space_inside_array_braces'     => true,

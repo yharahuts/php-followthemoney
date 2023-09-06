@@ -2,6 +2,7 @@
 namespace FollowTheMoney;
 
 use FollowTheMoney\Exceptions\FtmException;
+use FollowTheMoney\IdGenerator\EntityIdGeneratorInterface;
 use FollowTheMoney\Schema\SchemaRegistryInterface;
 
 /**
@@ -32,6 +33,9 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 
 	/** @var array */
 	protected array $values = [ ];
+
+	/** @var EntityIdGeneratorInterface|null */
+	protected ?EntityIdGeneratorInterface $id_generator = null;
 
 	/**
 	 * EntitySchema constructor.
@@ -115,11 +119,11 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	 * Set (overwrite) property value.
 	 *
 	 * @param string $prop
-	 * @param array|string $val
+	 * @param string|string[] $val
 	 *
 	 * @return $this
 	 */
-	public function set( string $prop, $val ) : EntitySchema {
+	public function set( string $prop, array|string $val ) : EntitySchema {
 		if ( !is_array( $val ) ) {
 			$val = [ $val ];
 		}
@@ -133,11 +137,11 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	 * Append value to property.
 	 *
 	 * @param string $prop
-	 * @param array|string $val
+	 * @param string|string[] $val
 	 *
 	 * @return $this
 	 */
-	public function append( string $prop, $val ) : EntitySchema {
+	public function append( string $prop, array|string $val ) : EntitySchema {
 		if ( !is_array( $val ) ) {
 			$val = [ $val ];
 		}
@@ -239,10 +243,18 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	/**
 	 * Return entity id.
 	 *
-	 * @return string|null
+	 * @return string
 	 */
-	public function getId() : ?string {
-		return $this->id;
+	public function getId() : string {
+		if ( !is_null( $this->id ) ) {
+			return $this->id;
+		}
+
+		if ( !is_null( $this->id_generator ) ) {
+			return $this->id_generator->generate( $this );
+		}
+
+		throw new FtmException( 'No entity_id and no generator is set for entity' );
 	}
 
 	/**
@@ -250,9 +262,9 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	 *
 	 * @param string $prop
 	 *
-	 * @return mixed|null
+	 * @return mixed
 	 */
-	public function get( string $prop ) {
+	public function get( string $prop ) : mixed {
 		return $this->values[ $prop ] ?? null;
 	}
 
@@ -262,6 +274,8 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	 * @param string|null $property
 	 *
 	 * @return array
+	 *
+	 * @throws FtmException
 	 */
 	public function values( ?string $property = null ) : array {
 		if ( is_string( $property ) ) {
@@ -280,6 +294,12 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 		$value = $this->schema[ $prop ] ?? [ ];
 
 		return is_array( $value ) ? $value : [ $value ];
+	}
+
+	public function setIdGenerator( EntityIdGeneratorInterface $id_generator ) : static {
+		$this->id_generator = $id_generator;
+
+		return $this;
 	}
 
 	/**
