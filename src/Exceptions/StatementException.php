@@ -1,5 +1,4 @@
 <?php
 namespace FollowTheMoney\Exceptions;
 
-class StatementException extends FtmException {
-}
+class StatementException extends FtmException {}

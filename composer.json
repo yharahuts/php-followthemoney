@@ -1,5 +1,5 @@
 {
-    "name": "legless/php-followthemoney",
+    "name": "yharahuts/php-followthemoney",
     "description": "PHP library to work with Follow the Money entities",
     "type": "library",
     "require": {
@@ -14,7 +14,7 @@
         "phpunit/phpunit": "^9.5.10",
         "friendsofphp/php-cs-fixer": "~3.13",
         "tareq1988/wp-php-cs-fixer": "dev-master",
-        "legless/space-inside-array-braces-fixer": "dev-master",
+        "yharahuts/space-inside-array-braces-fixer": "dev-master",
         "vimeo/psalm": "5.x-dev"
     },
     "autoload": {
