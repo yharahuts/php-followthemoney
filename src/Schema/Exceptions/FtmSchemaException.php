@@ -1,5 +1,4 @@
 <?php
 namespace FollowTheMoney\Schema\Exceptions;
 
-class FtmSchemaException extends \RuntimeException {
-}
+class FtmSchemaException extends \RuntimeException {}

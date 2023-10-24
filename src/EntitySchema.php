@@ -342,7 +342,7 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 		$props = $this->getSchemaProp( 'properties' );
 
 		foreach ( $this->parents as $parent ) {
-			$this->props = $this->props + $parent->properties();
+			$this->props += $parent->properties();
 		}
 
 		foreach ( $props as $name => $prop ) {

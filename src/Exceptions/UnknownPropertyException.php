@@ -1,5 +1,4 @@
 <?php
 namespace FollowTheMoney\Exceptions;
 
-class UnknownPropertyException extends FtmException {
-}
+class UnknownPropertyException extends FtmException {}

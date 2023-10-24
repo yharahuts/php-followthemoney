@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/vendor/tareq1988/wp-php-cs-fixer/loader.php';
-require_once __DIR__ . '/vendor/legless/space-inside-array-braces-fixer/src/SpaceInsideArrayBracesFixer.php';
+require_once __DIR__ . '/vendor/yharahuts/space-inside-array-braces-fixer/src/SpaceInsideArrayBracesFixer.php';
 
 $finder = PhpCsFixer\Finder::create()
 	->exclude( 'vendor' )
@@ -12,7 +12,7 @@ $config = new PhpCsFixer\Config();
 return $config
 	->registerCustomFixers( [
 		new \WeDevs\Fixer\SpaceInsideParenthesisFixer(),
-		new \Legless\Fixer\SpaceInsideArrayBracesFixer(),
+		new \Codestyle\Fixer\SpaceInsideArrayBracesFixer(),
 	] )
 	->setRules( [
 		'@PhpCsFixer'                         => true,
@@ -53,7 +53,7 @@ return $config
 		'blank_lines_before_namespace'        => [ 'min_line_breaks' => 1, 'max_line_breaks' => 1 ],
 		'php_unit_test_class_requires_covers' => false,
 		'WeDevs/space_inside_parenthesis'     => true,
-		'Legls/space_inside_array_braces'     => true,
+		'Yharahuts/space_inside_array_braces'     => true,
 		'class_attributes_separation'         => [
 			'elements' => [
 				'const'        => 'only_if_meta',
