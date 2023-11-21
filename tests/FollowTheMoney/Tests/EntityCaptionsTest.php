@@ -20,6 +20,7 @@ final class EntityCaptionsTest extends TestCase {
 			'person-ivan-sraka'       => [ 'etc/person-ivan-sraka.json', 'Іван Срака' ],
 			'person-with-email'       => [ 'etc/person-with-email.json', 'ivan@sraka.com' ],
 			'person-with-empty-email' => [ 'etc/person-with-empty-email.json', 'ivan@sraka.com' ],
+			'edge-debt'               => [ 'etc/edge-debt.json', '123' ],
 		];
 	}
 
@@ -58,6 +59,7 @@ final class EntityCaptionsTest extends TestCase {
 		return [
 			'company-20064120'  => [ 'company/company-20064120.json', [ 'name' => [ 'ВРУ', 'Верховна Рада України' ] ] ],
 			'person-ivan-sraka' => [ 'etc/person-ivan-sraka.json', [ 'name' => [ 'Іван Срака', 'Sraka Ivan' ], 'email' => [ 'ivan@sraka.com' ] ] ],
+			'edge-debt'         => [ 'etc/edge-debt.json', [ 'amount' => [ 123.0 ] ] ],
 		];
 	}
 

@@ -191,7 +191,17 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	 * @return array
 	 */
 	public function getCaptionPropertiesNames() : array {
-		return $this->schema[ 'caption' ] ?? [ ];
+		if ( !empty( $this->schema[ 'edge' ][ 'caption' ] ) ) {
+			$prop = $this->schema[ 'edge' ][ 'caption' ];
+
+			return [ $prop ];
+		}
+
+		if ( !empty( $this->schema[ 'caption' ] ) ) {
+			return $this->schema[ 'caption' ];
+		}
+
+		return [ ];
 	}
 
 	/**
