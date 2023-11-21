@@ -1,0 +1,9 @@
+{
+  "id": "debt",
+  "properties": {
+    "amount": [
+      123.00
+    ]
+  },
+  "schema": "Debt"
+}
