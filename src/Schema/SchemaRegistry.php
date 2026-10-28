@@ -23,7 +23,7 @@ interface SchemaRegistry {
 	public function has( string $schema ) : bool;
 
 	/**
-	 * Return schema definition by it's name.
+	 * Return schema definition by its name.
 	 *
 	 * @return SchemaDefinition
 	 */

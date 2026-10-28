@@ -65,7 +65,7 @@ class EntityStatementBag implements \IteratorAggregate, \Countable, \ArrayAccess
 	}
 
 	/**
-	 * Return statements as Json lines.
+	 * Return statements as JSON Lines.
 	 */
 	public function toJson( int $flags = JSON_UNESCAPED_UNICODE ) : string {
 		$statements = array_map( fn ( EntityStatement $item ) => $item->toJson( $flags ), $this->list );

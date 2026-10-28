@@ -15,6 +15,7 @@ use Tests\Support\StatementFactoryAware;
 
 /**
  * @covers \FollowTheMoney\Statements\EntityStatement
+ * @covers \FollowTheMoney\Statements\EntityStatementsGenerator
  *
  * @internal
  */
@@ -234,7 +235,7 @@ class EntityStatementsGeneratorTest extends TestCase {
 				'message'    => 'has value bar, expected foo',
 			];
 
-			// id is taken from id statement, so the first statement is a stranger
+			// id is taken from the id statement, so the first statement belongs to another entity
 			yield "{$mode}: id statement after statement of another entity" => [
 				'options'    => $options,
 				'statements' => [$foreign_last_name, $id],
@@ -243,7 +244,7 @@ class EntityStatementsGeneratorTest extends TestCase {
 		}
 
 		foreach ( self::ID_STATEMENT_OFF as $mode => $options ) {
-			// id is taken from the first statement, so id statement is a stranger
+			// id is taken from the first statement, so the id statement belongs to another entity
 			yield "{$mode}: id statement after statement of another entity" => [
 				'options'    => $options,
 				'statements' => [$foreign_last_name, $id],

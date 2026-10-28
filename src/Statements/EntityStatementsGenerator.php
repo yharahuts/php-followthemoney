@@ -7,7 +7,7 @@ use FollowTheMoney\Schema\SchemaRegistry;
 
 class EntityStatementsGenerator {
 	/**
-	 * @param bool $use_id_statement Add entity id statement on unpack, take entity id from it on pack.
+	 * @param bool $use_id_statement Add an entity id statement on unpack, take the entity id from it on pack.
 	 *                               When disabled, id statements are ignored on pack.
 	 */
 	public function __construct(
@@ -51,8 +51,8 @@ class EntityStatementsGenerator {
 			throw new StatementException( 'Empty statements list' );
 		}
 
-		// todo: find most top-level entity schema for all statements,
-		//       i.e. having statements for Thing, LegalEntity and Company, we need to create a Company entity
+		// todo: find the most specific entity schema among all statements,
+		//       e.g. having statements for Thing, LegalEntity and Company, we need to create a Company entity
 		$schema = $bag[ 0 ]->schema;
 		$entity = new EntitySchema( $schema, $this->registry );
 
@@ -79,10 +79,10 @@ class EntityStatementsGenerator {
 	}
 
 	/**
-	 * Entity id is taken from id statement (if enabled), or from the first statement if there's none.
+	 * Entity id is taken from the id statement (if enabled), or from the first statement if there's none.
 	 */
 	private function getEntityId( EntityStatementBag $bag ) : string {
-		// todo: use canonical_id in case of merged entities ?
+		// todo: use canonical_id in case of merged entities?
 		if ( $this->use_id_statement ) {
 			foreach ( $bag as $statement ) {
 				if ( $statement->prop === EntityStatement::ID_PROP ) {

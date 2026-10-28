@@ -39,7 +39,7 @@ JSON;
 	}
 
 	/**
-	 * @covers \FollowTheMoney\Statements\EntityStatementBag::fromJson
+	 * @covers \FollowTheMoney\Statements\EntityStatementBag::fromArray
 	 */
 	public function testFromArray() : void {
 		$array = [
@@ -53,7 +53,7 @@ JSON;
 	}
 
 	/**
-	 * @covers \FollowTheMoney\Statements\EntityStatementBag::fromJson
+	 * @covers \FollowTheMoney\Statements\EntityStatementBag::fromArray
 	 */
 	public function testFromBrokenArray() : void {
 		$this->expectException( StatementException::class );

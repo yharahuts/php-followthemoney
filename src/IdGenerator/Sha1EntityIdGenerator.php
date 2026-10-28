@@ -8,7 +8,7 @@ class Sha1EntityIdGenerator implements EntityIdGenerator {
 	protected string $prefix = 'ntt_id';
 
 	/**
-	 * @param string[] $properties Entity schema properties to generate id on
+	 * @param string[] $properties Entity schema properties to generate id from
 	 */
 	public function __construct( array $properties, ?string $prefix = null ) {
 		$this->properties = $properties;

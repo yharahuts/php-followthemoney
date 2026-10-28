@@ -45,7 +45,7 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	}
 
 	/**
-	 * Returns list of extended schemas.
+	 * Returns a list of extended schemas.
 	 *
 	 * @return string[]
 	 */
@@ -181,16 +181,16 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	}
 
 	/**
-	 * Will return entity caption based on FtM mapping
-	 * In case every property is undefined - will return null.
+	 * Returns entity caption based on FtM schema: the first non-empty value
+	 * of the first caption property that has values, or null if there's none.
 	 */
 	public function getEntityCaption() : ?string {
 		$values = $this->getCaptionValues();
 		$values = array_shift( $values ) ?? [];
 
 		foreach ( $values as $value ) {
-			// return first non-empty value for multi-valued props
-			// e.g. in case of empty strings in props
+			// return the first non-empty value of a multi-valued property,
+			// e.g. skip empty strings
 
 			if ( !empty( $value ) ) {
 				return $value;
@@ -216,7 +216,7 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	}
 
 	/**
-	 * Return property value by it's name.
+	 * Return property values by its name.
 	 *
 	 * @return string[]|null
 	 */
@@ -265,8 +265,8 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	}
 
 	/**
-	 * Load and create definitions for all parent entities, their parents, and so on
-	 * These will break if there's a loop in hierarchy.
+	 * Load and create definitions for all parent entities, their parents, and so on.
+	 * This will break if there's a loop in the hierarchy.
 	 */
 	private function loadParentSchemas() : void {
 		if ( $this->entity !== 'Thing' ) {
@@ -279,7 +279,7 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	}
 
 	/**
-	 * Init all properties definitions.
+	 * Init all property definitions.
 	 */
 	private function initProperties() : void {
 		$props = $this->schema[ 'properties' ] ?? [];

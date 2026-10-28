@@ -37,7 +37,7 @@ final class EntityCaptionsTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider  CaptionPropertiesNamesProvider
+	 * @dataProvider CaptionPropertiesNamesProvider
 	 *
 	 * @covers \FollowTheMoney\EntitySchema::getCaptionPropertiesNames
 	 */
@@ -56,7 +56,7 @@ final class EntityCaptionsTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider  CaptionPropertiesValuesProvider
+	 * @dataProvider CaptionPropertiesValuesProvider
 	 *
 	 * @covers \FollowTheMoney\EntitySchema::getCaptionValues
 	 */

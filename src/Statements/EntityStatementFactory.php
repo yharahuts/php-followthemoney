@@ -32,7 +32,7 @@ class EntityStatementFactory {
 	}
 
 	/**
-	 * Statement id is taken from array, or generated if it's empty.
+	 * Statement id is taken from the array, or generated if it's empty.
 	 * Property type is always taken from schema.
 	 *
 	 * @throws StatementException
