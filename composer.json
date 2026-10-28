@@ -3,7 +3,7 @@
     "description": "PHP library to work with Follow the Money entities",
     "type": "library",
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.3",
         "ext-yaml": "*",
         "ext-json": "*"
     },

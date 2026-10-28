@@ -3,17 +3,12 @@ namespace FollowTheMoney\Schema;
 
 use FollowTheMoney\Schema\Exceptions\FtmSchemaException;
 
-class YamlSchemaRegistry implements SchemaRegistryInterface {
+final class YamlSchemaRegistry implements SchemaRegistry {
 	/** @var string[] */
-	public const YAML_FILE_EXT = [ 'yml', 'yaml' ];
-	protected string $dir;
-	protected array $schemas = [ ];
+	public const array YAML_FILE_EXT = ['yml', 'yaml'];
+	private string $dir;
+	private array $schemas = [];
 
-	/**
-	 * YamlSchemaRegistry constructor.
-	 *
-	 * @param string $dir
-	 */
 	public function __construct( string $dir ) {
 		if ( !str_ends_with( $dir, '/' ) ) {
 			$dir .= '/';
@@ -24,12 +19,12 @@ class YamlSchemaRegistry implements SchemaRegistryInterface {
 		$this->processSchemasInDirectory();
 	}
 
-	/** {@inheritdoc} */
+	/** {@inheritDoc} */
 	public function has( string $schema ) : bool {
 		return array_key_exists( $schema, $this->schemas );
 	}
 
-	/** {@inheritdoc} */
+	/** {@inheritDoc} */
 	public function get( string $schema ) : array {
 		if ( !$this->has( $schema ) ) {
 			throw new FtmSchemaException( "No such schema defined: {$schema}" );
@@ -38,7 +33,7 @@ class YamlSchemaRegistry implements SchemaRegistryInterface {
 		return $this->schemas[ $schema ];
 	}
 
-	private function processSchemasInDirectory() {
+	private function processSchemasInDirectory() : void {
 		if ( !file_exists( $this->dir ) ) {
 			throw new FtmSchemaException( "No such directory exists: {$this->dir}" );
 		}
@@ -54,21 +49,13 @@ class YamlSchemaRegistry implements SchemaRegistryInterface {
 		}
 	}
 
-	/**
-	 * @param string $file
-	 *
-	 * @return bool
-	 */
 	private function needsProcessing( string $file ) : bool {
 		$ext = pathinfo( $file, PATHINFO_EXTENSION );
 		$ext = strtolower( $ext );
 
-		return in_array( $ext, static::YAML_FILE_EXT );
+		return in_array( $ext, self::YAML_FILE_EXT );
 	}
 
-	/**
-	 * @param string $file
-	 */
 	private function processSchemaDefinition( string $file ) : void {
 		$path = $this->dir.$file;
 		$schema_name = pathinfo( $file, PATHINFO_FILENAME );

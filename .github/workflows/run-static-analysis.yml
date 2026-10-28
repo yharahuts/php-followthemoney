@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        version: [ '8.0' ]
+        version: [ '8.3' ]
 
     name: Run Static Analysis
 

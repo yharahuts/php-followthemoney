@@ -3,22 +3,14 @@ namespace FollowTheMoney;
 
 class EntityProperty {
 	public string $name;
+	public PropertyType $type;
 	public ?string $label;
 	public ?string $description;
-	public ?string $type;
 
-	/**
-	 * EntityProperty constructor.
-	 *
-	 * @param string $name
-	 * @param string|null $label
-	 * @param string|null $description
-	 * @param string|null $type
-	 */
-	public function __construct( string $name, ?string $label = null, ?string $description = null, ?string $type = null ) {
+	public function __construct( string $name, PropertyType $type, ?string $label = null, ?string $description = null ) {
 		$this->name = $name;
+		$this->type = $type;
 		$this->label = $label;
 		$this->description = $description;
-		$this->type = $type;
 	}
 }

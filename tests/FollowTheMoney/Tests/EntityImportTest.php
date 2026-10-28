@@ -4,6 +4,7 @@ namespace Tests\FollowTheMoney\Tests;
 use FollowTheMoney\EntitySchema;
 use FollowTheMoney\Exceptions\FtmException;
 use PHPUnit\Framework\TestCase;
+use Tests\Support\CustomEntitySchema;
 use Tests\Support\SchemaRepositoryAware;
 
 /**
@@ -15,7 +16,7 @@ final class EntityImportTest extends TestCase {
 	/**
 	 * @covers \FollowTheMoney\EntitySchema::fromArray
 	 */
-	public function testImportFromArray() {
+	public function testImportFromArray() : void {
 		$json = '{"id": "bea008dac1ea309d22e100ceb0a5f3a44db882fa", "properties": {"addressEntity": ["e89d23f9af7daa0cc6d11a5701d23cbc9084a444"], "country": ["ua"], "incorporationDate": ["1990"], "jurisdiction": ["ua"], "mainCountry": ["ua"], "name": ["\u0412\u0420\u0423", "\u0412\u0435\u0440\u0445\u043e\u0432\u043d\u0430 \u0420\u0430\u0434\u0430 \u0423\u043a\u0440\u0430\u0457\u043d\u0438"], "phone": ["+380442554246"], "taxNumber": ["20064120"], "website": ["https://www.rada.gov.ua/"], "wikipediaUrl": ["https://uk.wikipedia.org/wiki/\u0412\u0435\u0440\u0445\u043e\u0432\u043d\u0430_\u0420\u0430\u0434\u0430_\u0423\u043a\u0440\u0430\u0457\u043d\u0438"]}, "schema": "PublicBody"}';
 		$arr = json_decode( $json, true );
 
@@ -23,17 +24,19 @@ final class EntityImportTest extends TestCase {
 
 		$this->assertEquals( 'PublicBody', $entity->getSchemaName() );
 		$this->assertEquals( 'bea008dac1ea309d22e100ceb0a5f3a44db882fa', $entity->getId() );
-		$this->assertEquals( [ 'ua' ], $entity->get( 'country' ) );
+		$this->assertEquals( ['ua'], $entity->get( 'country' ) );
 	}
 
-	public function BrokenArrayProvider() {
-		return [
-			[ [ ] ],
-			[ [ 'schema' => 'PublicBody' ] ],
-			[ [ 'schema' => 'foo bar' ] ],
-			[ [ 'schema' => 'foo bar', 'id' => 'foo' ] ],
-			[ [ 'schema' => 'foo bar', 'id' => 'foo', 'properties' => [ '' ] ] ],
-		];
+	/**
+	 * @covers \FollowTheMoney\EntitySchema::fromArray
+	 */
+	public function testImportFromArrayIntoSubclass() : void {
+		$arr = ['id' => 'bea008dac1ea309d22e100ceb0a5f3a44db882fa', 'schema' => 'PublicBody', 'properties' => ['country' => ['ua']]];
+		$entity = CustomEntitySchema::fromArray( $arr, $this->getRegistry() );
+
+		$this->assertInstanceOf( CustomEntitySchema::class, $entity );
+		$this->assertEquals( 'bea008dac1ea309d22e100ceb0a5f3a44db882fa', $entity->getId() );
+		$this->assertEquals( ['ua'], $entity->get( 'country' ) );
 	}
 
 	/**
@@ -41,33 +44,46 @@ final class EntityImportTest extends TestCase {
 	 *
 	 * @dataProvider BrokenArrayProvider
 	 */
-	public function testImportingFromBrokenArrayThrowsException( array $broken_array ) {
+	public function testImportingFromBrokenArrayThrowsException( array $broken_array ) : void {
 		$this->expectException( FtmException::class );
 		EntitySchema::fromArray( $broken_array, $this->getRegistry() );
+	}
+
+	public function BrokenArrayProvider() : array {
+		return [
+			[[]],
+			[['schema' => 'PublicBody']],
+			[['schema' => 'foo bar']],
+			[['schema' => 'foo bar', 'id' => 'foo']],
+			[['schema' => 'foo bar', 'id' => 'foo', 'properties' => ['']]],
+		];
 	}
 
 	/**
 	 * @covers \FollowTheMoney\EntitySchema::fromJson
 	 */
-	public function testImportFromJson() {
+	public function testImportFromJson() : void {
 		$json = '{"id": "bea008dac1ea309d22e100ceb0a5f3a44db882fa", "properties": {"addressEntity": ["e89d23f9af7daa0cc6d11a5701d23cbc9084a444"], "country": ["ua"], "incorporationDate": ["1990"], "jurisdiction": ["ua"], "mainCountry": ["ua"], "name": ["\u0412\u0420\u0423", "\u0412\u0435\u0440\u0445\u043e\u0432\u043d\u0430 \u0420\u0430\u0434\u0430 \u0423\u043a\u0440\u0430\u0457\u043d\u0438"], "phone": ["+380442554246"], "taxNumber": ["20064120"], "website": ["https://www.rada.gov.ua/"], "wikipediaUrl": ["https://uk.wikipedia.org/wiki/\u0412\u0435\u0440\u0445\u043e\u0432\u043d\u0430_\u0420\u0430\u0434\u0430_\u0423\u043a\u0440\u0430\u0457\u043d\u0438"]}, "schema": "PublicBody"}';
 		$entity = EntitySchema::fromJson( $json, $this->getRegistry() );
 
 		$this->assertEquals( 'PublicBody', $entity->getSchemaName() );
 		$this->assertEquals( 'bea008dac1ea309d22e100ceb0a5f3a44db882fa', $entity->getId() );
-		$this->assertEquals( [ 'ua' ], $entity->get( 'country' ) );
+		$this->assertEquals( ['ua'], $entity->get( 'country' ) );
 
 		$this->assertIsArray( $entity->values() );
-		$this->assertEquals( [ 'ua' ], $entity->values()[ 'country' ] );
+		$this->assertEquals( ['ua'], $entity->values()[ 'country' ] );
 	}
 
-	public function BrokenJsonProvider() : array {
-		return [
-			[ '{}' ],
-			[ '{' ],
-			[ 'null' ],
-			[ 'foo bar' ],
-		];
+	/**
+	 * @covers \FollowTheMoney\EntitySchema::fromJson
+	 */
+	public function testImportFromJsonIntoSubclass() : void {
+		$json = '{"id": "bea008dac1ea309d22e100ceb0a5f3a44db882fa", "properties": {"country": ["ua"]}, "schema": "PublicBody"}';
+		$entity = CustomEntitySchema::fromJson( $json, $this->getRegistry() );
+
+		$this->assertInstanceOf( CustomEntitySchema::class, $entity );
+		$this->assertEquals( 'bea008dac1ea309d22e100ceb0a5f3a44db882fa', $entity->getId() );
+		$this->assertEquals( ['ua'], $entity->get( 'country' ) );
 	}
 
 	/**
@@ -75,8 +91,17 @@ final class EntityImportTest extends TestCase {
 	 *
 	 * @dataProvider BrokenJsonProvider
 	 */
-	public function testImportingFromBrokenJsonThrowsException( string $json ) {
+	public function testImportingFromBrokenJsonThrowsException( string $json ) : void {
 		$this->expectException( FtmException::class );
 		EntitySchema::fromJson( $json, $this->getRegistry() );
+	}
+
+	public function BrokenJsonProvider() : array {
+		return [
+			['{}'],
+			['{'],
+			['null'],
+			['foo bar'],
+		];
 	}
 }

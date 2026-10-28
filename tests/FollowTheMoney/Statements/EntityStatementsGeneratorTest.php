@@ -2,10 +2,14 @@
 namespace Tests\FollowTheMoney\Statements;
 
 use FollowTheMoney\EntitySchema;
+use FollowTheMoney\Exceptions\UnknownPropertyException;
 use FollowTheMoney\Statements\EntityStatementBag;
+use FollowTheMoney\Statements\EntityStatementFactory;
 use FollowTheMoney\Statements\EntityStatementsGenerator;
 use PHPUnit\Framework\TestCase;
+use Tests\Support\ReadableStatementIdGenerator;
 use Tests\Support\SchemaRepositoryAware;
+use Tests\Support\StatementFactoryAware;
 
 /**
  * @covers \FollowTheMoney\Statements\EntityStatement
@@ -14,17 +18,19 @@ use Tests\Support\SchemaRepositoryAware;
  */
 class EntityStatementsGeneratorTest extends TestCase {
 	use SchemaRepositoryAware;
+	use StatementFactoryAware;
 
-	public function testEntityIsUnpackedToStatements() {
+	public function testEntityIsUnpackedToStatements() : void {
 		$json = '{"id": "bea008dac1ea309d22e100ceb0a5f3a44db882fa", "properties": {"addressEntity": ["e89d23f9af7daa0cc6d11a5701d23cbc9084a444"], "country": ["ua"], "incorporationDate": ["1990"], "jurisdiction": ["ua"], "mainCountry": ["ua"], "name": ["\u0412\u0420\u0423", "\u0412\u0435\u0440\u0445\u043e\u0432\u043d\u0430 \u0420\u0430\u0434\u0430 \u0423\u043a\u0440\u0430\u0457\u043d\u0438"], "phone": ["+380442554246"], "taxNumber": ["20064120"], "website": ["https://www.rada.gov.ua/"], "wikipediaUrl": ["https://uk.wikipedia.org/wiki/\u0412\u0435\u0440\u0445\u043e\u0432\u043d\u0430_\u0420\u0430\u0434\u0430_\u0423\u043a\u0440\u0430\u0457\u043d\u0438"]}, "schema": "PublicBody"}';
-		$entity = EntitySchema::fromJson( $json, $this->getRegistry() );
+		$registry = $this->getRegistry();
+		$entity = EntitySchema::fromJson( $json, $registry );
 
-		$generator = new EntityStatementsGenerator();
+		$generator = new EntityStatementsGenerator( $registry, $this->getStatementFactory() );
 		$statements = $generator->unpack( $entity );
 
 		$this->assertTrue( is_iterable( $statements ) );
-		$this->assertEquals( 'bea008dac1ea309d22e100ceb0a5f3a44db882fa', $statements[ 0 ]->getEntityId() );
-		$this->assertEquals( 'PublicBody', $statements[ 0 ]->getSchema() );
+		$this->assertEquals( 'bea008dac1ea309d22e100ceb0a5f3a44db882fa', $statements[ 0 ]->entity_id );
+		$this->assertEquals( 'PublicBody', $statements[ 0 ]->schema );
 
 		$this->assertEquals( $statements->toArray()[ 0 ][ 'schema' ], 'PublicBody' );
 		$this->assertEquals( $statements->toArray()[ 0 ][ 'entity_id' ], 'bea008dac1ea309d22e100ceb0a5f3a44db882fa' );
@@ -35,6 +41,7 @@ class EntityStatementsGeneratorTest extends TestCase {
 			'entity_id' => 'bea008dac1ea309d22e100ceb0a5f3a44db882fa',
 			'schema'    => 'PublicBody',
 			'prop'      => 'addressEntity',
+			'prop_type' => 'entity',
 			'val'       => 'e89d23f9af7daa0cc6d11a5701d23cbc9084a444',
 		], $statement );
 
@@ -42,29 +49,57 @@ class EntityStatementsGeneratorTest extends TestCase {
 		$this->assertEquals( json_decode( $statements[ 0 ]->toJson(), true ), $statements[ 0 ]->toArray() );
 	}
 
-	public function testStatementsArePackedToEntity() {
+	public function testEntityIsUnpackedWithCustomStatementIdGenerator() : void {
+		$registry = $this->getRegistry();
+		$entity = new EntitySchema( 'Person', $registry );
+		$entity->setId( 'foo' );
+		$entity->set( 'firstName', 'Ivan' );
+		$entity->set( 'birthDate', ['1975', '1975-01-02'] );
+
+		$generator = new EntityStatementsGenerator( $registry, new EntityStatementFactory( $registry, new ReadableStatementIdGenerator() ) );
+		$statements = $generator->unpack( $entity );
+
+		$this->assertSame(
+			['Person:foo:firstName:Ivan', 'Person:foo:birthDate:1975', 'Person:foo:birthDate:1975-01-02'],
+			array_column( $statements->toArray(), 'id' ),
+		);
+	}
+
+	public function testUnpackingUnknownPropertyThrowsException() : void {
+		$registry = $this->getRegistry();
+		$entity = new EntitySchema( 'Person', $registry );
+		$entity->setId( 'foo' );
+		$entity->set( 'foobar', 'Ivan' );
+
+		$generator = new EntityStatementsGenerator( $registry, $this->getStatementFactory() );
+
+		$this->expectException( UnknownPropertyException::class );
+		$generator->unpack( $entity );
+	}
+
+	public function testStatementsArePackedToEntity() : void {
 		$array = [
 			json_decode( '{"entity_id":"foobar","schema":"PublicBody","prop":"country","val":"ua"}', true ),
 			json_decode( '{"entity_id":"foobar","schema":"PublicBody","prop":"taxNumber","val":"20064120"}', true ),
 			json_decode( '{"entity_id":"foobar","schema":"PublicBody","prop":"taxNumber","val":"12345678"}', true ),
 		];
 
-		$statements = EntityStatementBag::fromArray( $array );
+		$statements = EntityStatementBag::fromArray( $array, $this->getStatementFactory() );
 
-		$generator = new EntityStatementsGenerator();
-		$entity = $generator->pack( $statements, $this->getRegistry() );
+		$generator = new EntityStatementsGenerator( $this->getRegistry(), $this->getStatementFactory() );
+		$entity = $generator->pack( $statements );
 
 		$this->assertEquals( 'foobar', $entity->getId() );
 		$this->assertEquals( 'PublicBody', $entity->getSchemaName() );
 
-		$this->assertEquals( [ '20064120', '12345678' ], $entity[ 'taxNumber' ] );
+		$this->assertEquals( ['20064120', '12345678'], $entity[ 'taxNumber' ] );
 	}
 
-	public function testPackCreatesTopMostEntitySchema() {
+	public function testPackCreatesTopMostEntitySchema() : void {
 		$this->markTestIncomplete();
 	}
 
-	public function testPackThrowsExceptionIfCantFigureOutTheTopmostSchema() {
+	public function testPackThrowsExceptionIfCantFigureOutTheTopmostSchema() : void {
 		$this->markTestIncomplete();
 	}
 }

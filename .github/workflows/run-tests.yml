@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        version: [ '8.0', '8.1', '8.2' ]
+        version: [ '8.3' ]
 
     name: Test PHP ${{ matrix.version }}
 

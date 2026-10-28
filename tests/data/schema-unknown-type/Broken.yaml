@@ -1,0 +1,6 @@
+Broken:
+  label: Broken
+  properties:
+    foo:
+      label: Foo
+      type: foobar

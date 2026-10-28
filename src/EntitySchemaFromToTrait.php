@@ -2,25 +2,20 @@
 namespace FollowTheMoney;
 
 use FollowTheMoney\Exceptions\FtmException;
-use FollowTheMoney\Schema\SchemaRegistryInterface;
+use FollowTheMoney\Schema\SchemaRegistry;
 
 trait EntitySchemaFromToTrait {
 	/** {@inheritDoc} */
-	public function __toString() {
+	public function __toString() : string {
 		return $this->toJson();
 	}
 
 	/**
 	 * Init entity from json.
 	 *
-	 * @param string $json
-	 * @param SchemaRegistryInterface $registry
-	 *
-	 * @return static
-	 *
 	 * @throws FtmException
 	 */
-	public static function fromJson( string $json, SchemaRegistryInterface $registry ) : static {
+	public static function fromJson( string $json, SchemaRegistry $registry ) : static {
 		$array = json_decode( $json, true );
 
 		if ( $array === null ) {
@@ -37,14 +32,9 @@ trait EntitySchemaFromToTrait {
 	}
 
 	/**
-	 * @param array $array
-	 * @param SchemaRegistryInterface $registry
-	 *
-	 * @return EntitySchema
-	 *
 	 * @throws FtmException
 	 */
-	public static function fromArray( array $array, SchemaRegistryInterface $registry ) : EntitySchema {
+	public static function fromArray( array $array, SchemaRegistry $registry ) : static {
 		if ( !isset( $array[ 'schema' ] ) ) {
 			throw new FtmException( 'No schema property in array' );
 		}
@@ -58,7 +48,7 @@ trait EntitySchemaFromToTrait {
 		}
 
 		try {
-			$entity = new EntitySchema( $array[ 'schema' ], $registry );
+			$entity = new static( $array[ 'schema' ], $registry );
 			$entity->setId( $array[ 'id' ] );
 			$entity->setValues( $array[ 'properties' ] );
 		} catch ( \Throwable $e ) {
@@ -70,8 +60,6 @@ trait EntitySchemaFromToTrait {
 
 	/**
 	 * Save entity as array.
-	 *
-	 * @return array
 	 */
 	public function toArray() : array {
 		return [
@@ -83,12 +71,8 @@ trait EntitySchemaFromToTrait {
 
 	/**
 	 * Save entity as json string.
-	 *
-	 * @param int $flags
-	 *
-	 * @return string
 	 */
-	public function toJson( $flags = JSON_UNESCAPED_UNICODE ) : string {
+	public function toJson( int $flags = JSON_UNESCAPED_UNICODE ) : string {
 		$array = $this->toArray();
 		$json = json_encode( $array, $flags );
 

@@ -10,22 +10,22 @@ use PHPUnit\Framework\TestCase;
  * @internal
  */
 final class YamlSchemaRegistryTest extends TestCase {
-	public function testThrowsExceptionIfNoDirectoryExists() {
+	public function testThrowsExceptionIfNoDirectoryExists() : void {
 		$this->expectException( FtmSchemaException::class );
 		$registry = new YamlSchemaRegistry( 'foo bar' );
 	}
 
-	public function testThrowsExceptionIfFilenameGiven() {
+	public function testThrowsExceptionIfFilenameGiven() : void {
 		$this->expectException( FtmSchemaException::class );
 		$registry = new YamlSchemaRegistry( 'followthemoney/followthemoney/schema/Address.yaml' );
 	}
 
-	public function testThrowsExceptionIfBrokenYaml() {
+	public function testThrowsExceptionIfBrokenYaml() : void {
 		$this->expectException( FtmSchemaException::class );
 		$registry = new YamlSchemaRegistry( 'tests/data/schema' );
 	}
 
-	public function testHasSchema() {
+	public function testHasSchema() : void {
 		$registry = new YamlSchemaRegistry( 'followthemoney/followthemoney/schema/' );
 
 		$this->assertTrue( $registry->has( 'Company' ) );
@@ -37,7 +37,7 @@ final class YamlSchemaRegistryTest extends TestCase {
 	/**
 	 * @dataProvider GetSchemaProvider
 	 */
-	public function testGetSchema( string $schema_name, string $label ) {
+	public function testGetSchema( string $schema_name, string $label ) : void {
 		$registry = new YamlSchemaRegistry( 'followthemoney/followthemoney/schema/' );
 
 		$schema = $registry->get( $schema_name );
@@ -51,13 +51,13 @@ final class YamlSchemaRegistryTest extends TestCase {
 
 	public function GetSchemaProvider() : array {
 		return [
-			[ 'Address', 'Address' ],
-			[ 'HyperText', 'Web page' ],
-			[ 'ProjectParticipant', 'Project participant' ],
+			['Address', 'Address'],
+			['HyperText', 'Web page'],
+			['ProjectParticipant', 'Project participant'],
 		];
 	}
 
-	public function testGettingUndefinedSchemaThrowsException() {
+	public function testGettingUndefinedSchemaThrowsException() : void {
 		$registry = new YamlSchemaRegistry( 'followthemoney/followthemoney/schema/' );
 
 		$this->expectException( FtmSchemaException::class );

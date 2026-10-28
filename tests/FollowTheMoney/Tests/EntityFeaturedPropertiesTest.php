@@ -11,22 +11,22 @@ use Tests\Support\SchemaRepositoryAware;
 class EntityFeaturedPropertiesTest extends TestCase {
 	use SchemaRepositoryAware;
 
-	public function FeaturedPropertiesProvider() {
-		return [
-			'Company' => [ 'Company', [ 'name', 'jurisdiction', 'registrationNumber', 'incorporationDate' ] ],
-			'Person'  => [ 'Person', [ 'name', 'nationality', 'birthDate' ] ],
-			'Address' => [ 'Address', [ 'full', 'city', 'street', 'country' ] ],
-		];
-	}
-
 	/**
 	 * @dataProvider FeaturedPropertiesProvider
 	 *
 	 * @covers \FollowTheMoney\EntitySchema::getFeaturedProperties
 	 */
-	public function testEntityFeaturedProperties( string $schema, array $expected_properties ) {
+	public function testEntityFeaturedProperties( string $schema, array $expected_properties ) : void {
 		$entity = new EntitySchema( $schema, $this->getRegistry() );
 
 		$this->assertEquals( $entity->getFeaturedProperties(), $expected_properties );
+	}
+
+	public function FeaturedPropertiesProvider() : array {
+		return [
+			'Company' => ['Company', ['name', 'jurisdiction', 'registrationNumber', 'incorporationDate']],
+			'Person'  => ['Person', ['name', 'nationality', 'birthDate']],
+			'Address' => ['Address', ['full', 'city', 'street', 'country']],
+		];
 	}
 }

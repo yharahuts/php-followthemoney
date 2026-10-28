@@ -4,30 +4,13 @@ namespace FollowTheMoney\Statements;
 use FollowTheMoney\Exceptions\StatementException;
 
 /**
- * @template-implements \IteratorAggregate<EntityStatement[]>
+ * @template-implements \IteratorAggregate<int,EntityStatement>
  * @template-implements \ArrayAccess<int,EntityStatement>
  */
 class EntityStatementBag implements \IteratorAggregate, \Countable, \ArrayAccess, \JsonSerializable {
 	/** @var EntityStatement[] */
-	protected array $list = [ ];
+	protected array $list = [];
 
-	/**
-	 * Add new statements to bag.
-	 *
-	 * @return EntityStatement
-	 */
-	public function add() : EntityStatement {
-		$statement = new EntityStatement();
-		$this->list[ ] = $statement;
-
-		return $statement;
-	}
-
-	/**
-	 * @param EntityStatement $statement
-	 *
-	 * @return $this
-	 */
 	public function append( EntityStatement $statement ) : static {
 		$this->list[ ] = $statement;
 
@@ -40,22 +23,26 @@ class EntityStatementBag implements \IteratorAggregate, \Countable, \ArrayAccess
 	}
 
 	/** {@inheritDoc} */
-	public function offsetExists( $offset ) : bool {
+	public function offsetExists( mixed $offset ) : bool {
 		return array_key_exists( $offset, $this->list );
 	}
 
 	/** {@inheritDoc} */
-	public function offsetGet( $offset ) {
+	public function offsetGet( mixed $offset ) : mixed {
 		return $this->list[ $offset ] ?? null;
 	}
 
 	/** {@inheritDoc} */
-	public function offsetSet( $offset, $value ) : void {
-		$this->list[ $offset ] = $value;
+	public function offsetSet( mixed $offset, mixed $value ) : void {
+		if ( is_null( $offset ) ) {
+			$this->list[ ] = $value;
+		} else {
+			$this->list[ $offset ] = $value;
+		}
 	}
 
 	/** {@inheritDoc} */
-	public function offsetUnset( $offset ) : void {
+	public function offsetUnset( mixed $offset ) : void {
 		unset( $this->list[ $offset ] );
 	}
 
@@ -64,26 +51,15 @@ class EntityStatementBag implements \IteratorAggregate, \Countable, \ArrayAccess
 		return count( $this->list );
 	}
 
-	/**
-	 * @return array
-	 */
 	public function toArray() : array {
-		return array_map( function ( $item ) {
-			return $item->toArray();
-		}, $this->list );
+		return array_map( fn ( EntityStatement $item ) => $item->toArray(), $this->list );
 	}
 
 	/**
 	 * Return statements as Json lines.
-	 *
-	 * @param int $flags
-	 *
-	 * @return string
 	 */
 	public function toJson( int $flags = JSON_UNESCAPED_UNICODE ) : string {
-		$statements = array_map( function ( $item ) use ( $flags ) {
-			return $item->toJson( $flags );
-		}, $this->list );
+		$statements = array_map( fn ( EntityStatement $item ) => $item->toJson( $flags ), $this->list );
 
 		return join( "\n", $statements );
 	}
@@ -94,18 +70,14 @@ class EntityStatementBag implements \IteratorAggregate, \Countable, \ArrayAccess
 	}
 
 	/**
-	 * @param string $lines
-	 *
-	 * @return static
-	 *
-	 * @throws \FollowTheMoney\Exceptions\StatementException
+	 * @throws StatementException
 	 */
-	public static function fromJson( string $lines ) : static {
+	public static function fromJson( string $lines, EntityStatementFactory $factory ) : static {
 		$lines = explode( "\n", $lines );
 		$bag = new static();
 
 		foreach ( $lines as $json ) {
-			$statement = EntityStatement::fromJson( $json );
+			$statement = $factory->fromJson( $json );
 			$bag->append( $statement );
 		}
 
@@ -113,18 +85,14 @@ class EntityStatementBag implements \IteratorAggregate, \Countable, \ArrayAccess
 	}
 
 	/**
-	 * @param array $array
-	 *
-	 * @return static
-	 *
-	 * @throws \FollowTheMoney\Exceptions\StatementException
+	 * @throws StatementException
 	 */
-	public static function fromArray( array $array ) : static {
+	public static function fromArray( array $array, EntityStatementFactory $factory ) : static {
 		$bag = new static();
 
 		try {
 			foreach ( $array as $item ) {
-				$statement = EntityStatement::fromArray( $item );
+				$statement = $factory->fromArray( $item );
 				$bag->append( $statement );
 			}
 		} catch ( \Throwable $e ) {

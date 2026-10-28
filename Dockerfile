@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1.2
-FROM php:8.0-cli-bullseye
+FROM php:8.3-cli-bookworm
 
 RUN apt update
 RUN apt install -y libyaml-dev libzip-dev unzip
@@ -9,7 +9,7 @@ RUN pecl install pcov && docker-php-ext-enable pcov \
  && echo "pcov.enabled = 1" >> "$PHP_INI_DIR/php.ini" \
  && echo "pcov.directory = ." >> "$PHP_INI_DIR/php.ini"
 
-COPY --from=composer:2.1.11 /usr/bin/composer /usr/local/bin/composer
+COPY --from=composer:2.10.3 /usr/bin/composer /usr/local/bin/composer
 
 WORKDIR /app
 CMD ["php"]

@@ -1,0 +1,6 @@
+Thing:
+  label: Thing
+  properties:
+    name:
+      label: Name
+      type: name

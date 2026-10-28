@@ -14,12 +14,12 @@ final class EntityExportTest extends TestCase {
 	/**
 	 * @covers \FollowTheMoney\EntitySchema::toArray
 	 */
-	public function testExportEntityToArray() {
+	public function testExportEntityToArray() : void {
 		$entity = $this->getEntity();
 
 		$this->assertIsArray( $entity->toArray() );
 		$this->assertEquals( 'bea008dac1ea309d22e100ceb0a5f3a44db882fa', $entity->toArray()[ 'id' ] );
-		$this->assertEquals( [ 'foo' ], $entity->toArray()[ 'properties' ][ 'name' ] );
+		$this->assertEquals( ['foo'], $entity->toArray()[ 'properties' ][ 'name' ] );
 	}
 
 	/**
@@ -27,12 +27,12 @@ final class EntityExportTest extends TestCase {
 	 * @covers \FollowTheMoney\EntitySchema::jsonSerialize
 	 * @covers \FollowTheMoney\EntitySchema::toJson
 	 */
-	public function testExportEntityToJson() {
+	public function testExportEntityToJson() : void {
 		$entity = $this->getEntity();
 
 		$json = json_decode( $entity->toJson() );
 		$this->assertEquals( 'bea008dac1ea309d22e100ceb0a5f3a44db882fa', $json->id );
-		$this->assertEquals( [ 'foo' ], $json->properties->name );
+		$this->assertEquals( ['foo'], $json->properties->name );
 
 		$this->assertEquals( $entity->toJson(), (string) $entity );
 		$this->assertEquals( json_encode( $entity ), (string) $entity );
