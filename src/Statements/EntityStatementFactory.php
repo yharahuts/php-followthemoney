@@ -39,17 +39,22 @@ class EntityStatementFactory {
 	 */
 	public function fromArray( array $array ) : EntityStatement {
 		try {
+			$entity_id = self::stringValue( $array[ 'entity_id' ] ?? null, 'entity_id' );
+			$schema = self::stringValue( $array[ 'schema' ] ?? null, 'schema' );
+			$prop = self::stringValue( $array[ 'prop' ] ?? null, 'prop' );
+			$val = self::stringValue( $array[ 'val' ] ?? null, 'val' );
+
 			if ( empty( $array[ 'id' ] ) ) {
-				return $this->create( $array[ 'entity_id' ], $array[ 'schema' ], $array[ 'prop' ], $array[ 'val' ] );
+				return $this->create( $entity_id, $schema, $prop, $val );
 			}
 
 			return new EntityStatement(
-				id: $array[ 'id' ],
-				entity_id: $array[ 'entity_id' ],
-				schema: $array[ 'schema' ],
-				prop: $array[ 'prop' ],
-				prop_type: $this->getPropertyType( $array[ 'schema' ], $array[ 'prop' ] ),
-				val: $array[ 'val' ],
+				id: self::stringValue( $array[ 'id' ], 'id' ),
+				entity_id: $entity_id,
+				schema: $schema,
+				prop: $prop,
+				prop_type: $this->getPropertyType( $schema, $prop ),
+				val: $val,
 			);
 		} catch ( \Throwable $e ) {
 			throw new StatementException( 'Failed to init statement: '.$e->getMessage(), 0, $e );
@@ -66,7 +71,24 @@ class EntityStatementFactory {
 			throw new StatementException( 'Failed to parse json: '.json_last_error_msg() );
 		}
 
+		if ( !is_array( $array ) ) {
+			throw new StatementException( 'Decoded json is a scalar value' );
+		}
+
 		return $this->fromArray( $array );
+	}
+
+	/**
+	 * Scalars are cast to string, the same way PHP coerces them for string arguments.
+	 *
+	 * @throws StatementException
+	 */
+	private static function stringValue( mixed $value, string $name ) : string {
+		if ( !is_scalar( $value ) ) {
+			throw new StatementException( "Expected scalar {$name}, got ".get_debug_type( $value ) );
+		}
+
+		return (string) $value;
 	}
 
 	/**

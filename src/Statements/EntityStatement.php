@@ -3,6 +3,9 @@ namespace FollowTheMoney\Statements;
 
 use FollowTheMoney\PropertyType;
 
+/**
+ * @psalm-type StatementArray = array{id: string, entity_id: string, schema: string, prop: string, prop_type: string, val: string}
+ */
 readonly class EntityStatement implements \JsonSerializable {
 	/**
 	 * Property name of a statement holding entity id as a value.
@@ -18,6 +21,9 @@ readonly class EntityStatement implements \JsonSerializable {
 		public string $val,
 	) {}
 
+	/**
+	 * @return StatementArray
+	 */
 	public function toArray() : array {
 		return [
 			'id'        => $this->id,

@@ -30,6 +30,9 @@ class EntityIdTest extends TestCase {
 	}
 
 	/**
+	 * @param array<string, string|string[]> $entity_props
+	 * @param string[]                       $id_props
+	 *
 	 * @dataProvider EntityIdProvider
 	 */
 	public function testIdIsGeneratedForEntity( string $schema, array $entity_props, array $id_props, string $expected_id ) : void {

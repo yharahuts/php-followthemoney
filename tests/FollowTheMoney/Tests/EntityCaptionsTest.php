@@ -71,7 +71,7 @@ final class EntityCaptionsTest extends TestCase {
 		return [
 			'company-20064120'  => ['company/company-20064120.json', ['name' => ['ВРУ', 'Верховна Рада України']]],
 			'person-ivan-sraka' => ['etc/person-ivan-sraka.json', ['name' => ['Іван Срака', 'Sraka Ivan'], 'email' => ['ivan@sraka.com']]],
-			'edge-debt'         => ['etc/edge-debt.json', ['amount' => [123.0]]],
+			'edge-debt'         => ['etc/edge-debt.json', ['amount' => ['123']]],
 		];
 	}
 }

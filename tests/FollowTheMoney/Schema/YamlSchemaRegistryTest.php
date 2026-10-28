@@ -46,7 +46,7 @@ final class YamlSchemaRegistryTest extends TestCase {
 		$this->assertArrayHasKey( 'caption', $schema );
 		$this->assertArrayHasKey( 'properties', $schema );
 
-		$this->assertSame( $label, $schema[ 'label' ] );
+		$this->assertSame( $label, $schema[ 'label' ] ?? null );
 	}
 
 	public function GetSchemaProvider() : array {

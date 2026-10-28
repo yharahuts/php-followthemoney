@@ -48,9 +48,9 @@ trait EntitySchemaFromToTrait {
 		}
 
 		try {
-			$entity = new static( $array[ 'schema' ], $registry );
-			$entity->setId( $array[ 'id' ] );
-			$entity->setValues( $array[ 'properties' ] );
+			$entity = new static( self::stringValue( $array[ 'schema' ], 'schema' ), $registry );
+			$entity->setId( self::stringValue( $array[ 'id' ], 'id' ) );
+			$entity->setValues( self::propertiesValues( $array[ 'properties' ] ) );
 		} catch ( \Throwable $e ) {
 			throw new FtmException( "Can't create entity: ".$e->getMessage(), 0, $e );
 		}
@@ -60,6 +60,8 @@ trait EntitySchemaFromToTrait {
 
 	/**
 	 * Save entity as array.
+	 *
+	 * @return array{id: string, schema: string, properties: array<string, string[]>}
 	 */
 	public function toArray() : array {
 		return [
@@ -88,5 +90,38 @@ trait EntitySchemaFromToTrait {
 	/** {@inheritDoc} */
 	public function jsonSerialize() : array {
 		return $this->toArray();
+	}
+
+	/**
+	 * Scalars are cast to string, the same way PHP coerces them for string arguments.
+	 *
+	 * @throws FtmException
+	 */
+	private static function stringValue( mixed $value, string $name ) : string {
+		if ( !is_scalar( $value ) ) {
+			throw new FtmException( "Expected scalar {$name}, got ".get_debug_type( $value ) );
+		}
+
+		return (string) $value;
+	}
+
+	/**
+	 * @return array<string, string[]>
+	 *
+	 * @throws FtmException
+	 */
+	private static function propertiesValues( mixed $properties ) : array {
+		if ( !is_array( $properties ) ) {
+			throw new FtmException( 'Expected properties array, got '.get_debug_type( $properties ) );
+		}
+
+		$properties = array_map( fn ( mixed $values ) => is_array( $values ) ? $values : [$values], $properties );
+		$result = [];
+
+		foreach ( $properties as $prop => $values ) {
+			$result[ (string) $prop ] = array_map( fn ( mixed $value ) => self::stringValue( $value, "{$prop} value" ), $values );
+		}
+
+		return $result;
 	}
 }
