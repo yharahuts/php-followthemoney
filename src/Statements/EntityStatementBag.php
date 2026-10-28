@@ -4,11 +4,15 @@ namespace FollowTheMoney\Statements;
 use FollowTheMoney\Exceptions\StatementException;
 
 /**
+ * @psalm-import-type StatementArray from EntityStatement
+ *
+ * @psalm-consistent-constructor
+ *
  * @template-implements \IteratorAggregate<int,EntityStatement>
  * @template-implements \ArrayAccess<int,EntityStatement>
  */
 class EntityStatementBag implements \IteratorAggregate, \Countable, \ArrayAccess, \JsonSerializable {
-	/** @var EntityStatement[] */
+	/** @var array<int, EntityStatement> */
 	protected array $list = [];
 
 	public function append( EntityStatement $statement ) : static {
@@ -17,7 +21,9 @@ class EntityStatementBag implements \IteratorAggregate, \Countable, \ArrayAccess
 		return $this;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * @return \ArrayIterator<int, EntityStatement>
+	 */
 	public function getIterator() : \ArrayIterator {
 		return new \ArrayIterator( $this->list );
 	}
@@ -51,6 +57,9 @@ class EntityStatementBag implements \IteratorAggregate, \Countable, \ArrayAccess
 		return count( $this->list );
 	}
 
+	/**
+	 * @return array<int, StatementArray>
+	 */
 	public function toArray() : array {
 		return array_map( fn ( EntityStatement $item ) => $item->toArray(), $this->list );
 	}
@@ -92,6 +101,10 @@ class EntityStatementBag implements \IteratorAggregate, \Countable, \ArrayAccess
 
 		try {
 			foreach ( $array as $item ) {
+				if ( !is_array( $item ) ) {
+					throw new StatementException( 'Expected statement array, got '.get_debug_type( $item ) );
+				}
+
 				$statement = $factory->fromArray( $item );
 				$bag->append( $statement );
 			}

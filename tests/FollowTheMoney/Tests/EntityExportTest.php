@@ -30,9 +30,10 @@ final class EntityExportTest extends TestCase {
 	public function testExportEntityToJson() : void {
 		$entity = $this->getEntity();
 
-		$json = json_decode( $entity->toJson() );
-		$this->assertEquals( 'bea008dac1ea309d22e100ceb0a5f3a44db882fa', $json->id );
-		$this->assertEquals( ['foo'], $json->properties->name );
+		$this->assertJsonStringEqualsJsonString(
+			'{"id": "bea008dac1ea309d22e100ceb0a5f3a44db882fa", "schema": "Company", "properties": {"name": ["foo"]}}',
+			$entity->toJson(),
+		);
 
 		$this->assertEquals( $entity->toJson(), (string) $entity );
 		$this->assertEquals( json_encode( $entity ), (string) $entity );

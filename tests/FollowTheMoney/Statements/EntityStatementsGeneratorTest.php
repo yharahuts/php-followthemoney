@@ -4,6 +4,7 @@ namespace Tests\FollowTheMoney\Statements;
 use FollowTheMoney\EntitySchema;
 use FollowTheMoney\Exceptions\StatementException;
 use FollowTheMoney\Exceptions\UnknownPropertyException;
+use FollowTheMoney\Statements\EntityStatement;
 use FollowTheMoney\Statements\EntityStatementBag;
 use FollowTheMoney\Statements\EntityStatementFactory;
 use FollowTheMoney\Statements\EntityStatementsGenerator;
@@ -38,7 +39,7 @@ class EntityStatementsGeneratorTest extends TestCase {
 		$generator = new EntityStatementsGenerator( $registry, $this->getStatementFactory() );
 		$statements = $generator->unpack( $entity );
 
-		$this->assertTrue( is_iterable( $statements ) );
+		$this->assertContainsOnlyInstancesOf( EntityStatement::class, $statements );
 		$this->assertEquals( 'bea008dac1ea309d22e100ceb0a5f3a44db882fa', $statements[ 0 ]->entity_id );
 		$this->assertEquals( 'PublicBody', $statements[ 0 ]->schema );
 

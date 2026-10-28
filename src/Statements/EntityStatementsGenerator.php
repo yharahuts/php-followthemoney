@@ -60,7 +60,6 @@ class EntityStatementsGenerator {
 		$entity->setId( $id );
 
 		foreach ( $bag as $statement ) {
-			/** @var EntityStatement $statement */
 			if ( $statement->entity_id !== $id ) {
 				throw new StatementException( "Statement {$statement->id} belongs to entity {$statement->entity_id}, expected {$id}" );
 			}
@@ -86,7 +85,6 @@ class EntityStatementsGenerator {
 		// todo: use canonical_id in case of merged entities ?
 		if ( $this->use_id_statement ) {
 			foreach ( $bag as $statement ) {
-				/** @var EntityStatement $statement */
 				if ( $statement->prop === EntityStatement::ID_PROP ) {
 					return $statement->val;
 				}

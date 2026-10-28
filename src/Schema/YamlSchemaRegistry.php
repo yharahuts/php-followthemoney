@@ -3,10 +3,15 @@ namespace FollowTheMoney\Schema;
 
 use FollowTheMoney\Schema\Exceptions\FtmSchemaException;
 
+/**
+ * @psalm-import-type SchemaDefinition from SchemaRegistry
+ */
 final class YamlSchemaRegistry implements SchemaRegistry {
 	/** @var string[] */
 	public const array YAML_FILE_EXT = ['yml', 'yaml'];
 	private string $dir;
+
+	/** @var array<string, SchemaDefinition> */
 	private array $schemas = [];
 
 	public function __construct( string $dir ) {
@@ -62,10 +67,11 @@ final class YamlSchemaRegistry implements SchemaRegistry {
 
 		$yaml = yaml_parse_file( $path );
 
-		if ( ( $yaml === false ) || empty( $yaml[ $schema_name ] ) ) {
+		if ( !is_array( $yaml ) || empty( $yaml[ $schema_name ] ) || !is_array( $yaml[ $schema_name ] ) ) {
 			throw new FtmSchemaException( "Failed to parse schema for {$schema_name} in {$path}" );
 		}
 
+		/** @var SchemaDefinition $schema_def */
 		$schema_def = $yaml[ $schema_name ];
 		$this->schemas[ $schema_name ] = $schema_def;
 	}
