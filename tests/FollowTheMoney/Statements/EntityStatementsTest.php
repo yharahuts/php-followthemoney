@@ -113,6 +113,11 @@ class EntityStatementsTest extends TestCase {
 			'json'          => '{"entity_id":"foo","schema":"PublicBody","prop":"country","prop_type":"date","val":"ua"}',
 			'expected_type' => PropertyType::Country,
 		];
+
+		yield 'id statement' => [
+			'json'          => '{"entity_id":"foo","schema":"Person","prop":"id","val":"foo"}',
+			'expected_type' => PropertyType::Id,
+		];
 	}
 
 	/**
@@ -163,6 +168,10 @@ class EntityStatementsTest extends TestCase {
 
 		yield 'unknown schema' => [
 			'json' => '{"entity_id":"foo","schema":"FooBar","prop":"name","val":"ua"}',
+		];
+
+		yield 'id statement of unknown schema' => [
+			'json' => '{"entity_id":"foo","schema":"FooBar","prop":"id","val":"foo"}',
 		];
 	}
 }

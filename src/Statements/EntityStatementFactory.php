@@ -74,6 +74,11 @@ class EntityStatementFactory {
 	 */
 	private function getPropertyType( string $schema, string $prop ) : PropertyType {
 		$this->schemas[ $schema ] ??= new EntitySchema( $schema, $this->registry );
+
+		if ( $prop === EntityStatement::ID_PROP ) {
+			return PropertyType::Id;
+		}
+
 		$type = $this->schemas[ $schema ]->getPropertyType( $prop );
 
 		if ( $type === null ) {

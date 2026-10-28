@@ -4,6 +4,11 @@ namespace FollowTheMoney\Statements;
 use FollowTheMoney\PropertyType;
 
 readonly class EntityStatement implements \JsonSerializable {
+	/**
+	 * Property name of a statement holding entity id as a value.
+	 */
+	public const string ID_PROP = 'id';
+
 	public function __construct(
 		public string $id,
 		public string $entity_id,

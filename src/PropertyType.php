@@ -14,6 +14,9 @@ enum PropertyType : string {
 	case Gender = 'gender';
 	case Html = 'html';
 	case Iban = 'iban';
+
+	// type of entity id statement only, not used in schemas
+	case Id = 'id';
 	case Identifier = 'identifier';
 	case Ip = 'ip';
 	case Json = 'json';

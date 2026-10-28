@@ -29,6 +29,7 @@ class EntityStatementsExportTest extends TestCase {
 		$statements = $generator->unpack( $entity )->toArray();
 
 		$this->assertSame( [
+			['id' => '75ed4691dc1c0e47627b2d7267651fee8b7f3860', 'entity_id' => 'foo', 'schema' => 'Person', 'prop' => 'id', 'prop_type' => 'id', 'val' => 'foo'],
 			['id' => '595e95b7b194ccd6cb54ab64aae7c7a0a7a05e94', 'entity_id' => 'foo', 'schema' => 'Person', 'prop' => 'firstName', 'prop_type' => 'string', 'val' => 'Ivan'],
 			['id' => 'a106fae9c90af0d595cd6f7eabe3c23d3ab3cee4', 'entity_id' => 'foo', 'schema' => 'Person', 'prop' => 'lastName', 'prop_type' => 'string', 'val' => 'Sraka'],
 			['id' => '0c99969d46e26080e2117cc8c5eb89363c51a8e5', 'entity_id' => 'foo', 'schema' => 'Person', 'prop' => 'birthDate', 'prop_type' => 'date', 'val' => '1975'],
