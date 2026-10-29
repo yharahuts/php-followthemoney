@@ -17,30 +17,31 @@ class EntityStatementsGenerator {
 	) {}
 
 	public function unpack( EntitySchema $entity ) : EntityStatementBag {
-		$statements = new EntityStatementBag();
+		$statements = [];
 		$id = $entity->getId();
+		$schema = $entity->getSchemaName();
 
 		if ( $this->use_id_statement ) {
-			$statements->append( $this->factory->create(
+			$statements[ ] = $this->factory->create(
 				entity_id: $id,
-				schema: $entity->getSchemaName(),
+				schema: $schema,
 				prop: EntityStatement::ID_PROP,
 				val: $id,
-			) );
+			);
 		}
 
 		foreach ( $entity->values() as $name => $values ) {
 			foreach ( $values as $val ) {
-				$statements->append( $this->factory->create(
+				$statements[ ] = $this->factory->create(
 					entity_id: $id,
-					schema: $entity->getSchemaName(),
+					schema: $schema,
 					prop: $name,
 					val: $val,
-				) );
+				);
 			}
 		}
 
-		return $statements;
+		return new EntityStatementBag( $statements );
 	}
 
 	/**
@@ -58,6 +59,7 @@ class EntityStatementsGenerator {
 
 		$id = $this->getEntityId( $bag );
 		$entity->setId( $id );
+		$values = [];
 
 		foreach ( $bag as $statement ) {
 			if ( $statement->entity_id !== $id ) {
@@ -72,10 +74,10 @@ class EntityStatementsGenerator {
 				continue;
 			}
 
-			$entity->append( $statement->prop, $statement->val );
+			$values[ $statement->prop ][ ] = $statement->val;
 		}
 
-		return $entity;
+		return $entity->setValues( $values );
 	}
 
 	/**

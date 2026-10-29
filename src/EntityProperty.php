@@ -1,7 +1,7 @@
 <?php
 namespace FollowTheMoney;
 
-class EntityProperty {
+readonly class EntityProperty {
 	public string $name;
 	public PropertyType $type;
 	public ?string $label;

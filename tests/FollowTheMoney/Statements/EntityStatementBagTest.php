@@ -61,6 +61,20 @@ JSON;
 	}
 
 	/**
+	 * @covers \FollowTheMoney\Statements\EntityStatementBag::__construct
+	 */
+	public function testCreateFromList() : void {
+		$first = new EntityStatement( id: 'first', entity_id: 'foo', schema: 'Person', prop: 'name', prop_type: PropertyType::Name, val: 'first' );
+		$second = new EntityStatement( id: 'second', entity_id: 'foo', schema: 'Person', prop: 'name', prop_type: PropertyType::Name, val: 'second' );
+
+		$bag = new EntityStatementBag( [$first, $second] );
+
+		$this->assertCount( 2, $bag );
+		$this->assertSame( $first, $bag[ 0 ] );
+		$this->assertSame( $second, $bag[ 1 ] );
+	}
+
+	/**
 	 * @covers \FollowTheMoney\Statements\EntityStatementBag::offsetSet
 	 */
 	public function testAppendWithArraySyntax() : void {

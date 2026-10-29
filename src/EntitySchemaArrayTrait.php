@@ -31,7 +31,7 @@ trait EntitySchemaArrayTrait {
 	}
 
 	/**
-	 * @param string          $offset
+	 * @param string $offset
 	 * @param string|string[] $value
 	 */
 	public function offsetSet( mixed $offset, mixed $value ) : void {
