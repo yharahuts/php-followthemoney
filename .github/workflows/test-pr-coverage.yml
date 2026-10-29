@@ -2,7 +2,6 @@ name: Check PR test coverage
 
 on:
   pull_request:
-    branches: [ "master" ]
 
 permissions:
   contents: read
