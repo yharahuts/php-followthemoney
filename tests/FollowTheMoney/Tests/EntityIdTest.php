@@ -31,7 +31,7 @@ class EntityIdTest extends TestCase {
 
 	/**
 	 * @param array<string, string|string[]> $entity_props
-	 * @param string[]                       $id_props
+	 * @param string[] $id_props
 	 *
 	 * @dataProvider EntityIdProvider
 	 */

@@ -35,6 +35,40 @@ class EntitySchemaTest extends TestCase {
 		new EntitySchema( 'Broken', new YamlSchemaRegistry( 'tests/data/schema-unknown-type' ) );
 	}
 
+	public function testUnknownPropertyTypeThrowsExceptionOnEveryCreation() : void {
+		$registry = new YamlSchemaRegistry( 'tests/data/schema-unknown-type' );
+
+		try {
+			new EntitySchema( 'Broken', $registry );
+		} catch ( FtmSchemaException ) {
+		}
+
+		$this->expectException( FtmSchemaException::class );
+		new EntitySchema( 'Broken', $registry );
+	}
+
+	public function testEntitiesOfOneSchemaHaveTheirOwnValues() : void {
+		$registry = $this->getRegistry();
+		$first = new EntitySchema( 'Company', $registry );
+		$second = new EntitySchema( 'Company', $registry );
+
+		$first->setId( 'foo' );
+		$first->set( 'name', 'Foo' );
+		$second->setId( 'bar' );
+
+		$this->assertSame( $first->properties(), $second->properties() );
+		$this->assertSame( ['id' => 'foo', 'schema' => 'Company', 'properties' => ['name' => ['Foo']]], $first->toArray() );
+		$this->assertSame( ['id' => 'bar', 'schema' => 'Company', 'properties' => []], $second->toArray() );
+	}
+
+	public function testSchemaOfTheSameNameIsTakenFromItsOwnRegistry() : void {
+		$ftm_thing = new EntitySchema( 'Thing', $this->getRegistry() );
+		$test_thing = new EntitySchema( 'Thing', new YamlSchemaRegistry( 'tests/data/schema-unknown-type' ) );
+
+		$this->assertSame( ['name'], array_keys( $test_thing->properties() ) );
+		$this->assertArrayHasKey( 'summary', $ftm_thing->properties() );
+	}
+
 	public function testModify() : void {
 		$json = '{"id": "bea008dac1ea309d22e100ceb0a5f3a44db882fa", "properties": {"name": ["foo"]}, "schema": "Company"}';
 		$entity = EntitySchema::fromJson( $json, $this->getRegistry() );

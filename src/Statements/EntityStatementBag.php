@@ -15,6 +15,13 @@ class EntityStatementBag implements \IteratorAggregate, \Countable, \ArrayAccess
 	/** @var array<int, EntityStatement> */
 	protected array $list = [];
 
+	/**
+	 * @param array<int, EntityStatement> $list
+	 */
+	public function __construct( array $list = [] ) {
+		$this->list = $list;
+	}
+
 	public function append( EntityStatement $statement ) : static {
 		$this->list[ ] = $statement;
 

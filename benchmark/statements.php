@@ -89,7 +89,7 @@ while ( !$interrupted && ( $line = fgets( $file ) ) !== false ) {
 		$start = hrtime( true );
 		$generator->pack( $bag );
 		$pack = hrtime( true ) - $start;
-	} catch ( \Throwable $e ) {
+	} catch ( Throwable $e ) {
 		++$skipped;
 		$errors[ $e->getMessage() ] = ( $errors[ $e->getMessage() ] ?? 0 ) + 1;
 

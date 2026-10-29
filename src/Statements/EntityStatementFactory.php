@@ -1,6 +1,7 @@
 <?php
 namespace FollowTheMoney\Statements;
 
+use FollowTheMoney\EntityProperty;
 use FollowTheMoney\EntitySchema;
 use FollowTheMoney\Exceptions\StatementException;
 use FollowTheMoney\Exceptions\UnknownPropertyException;
@@ -9,8 +10,8 @@ use FollowTheMoney\PropertyType;
 use FollowTheMoney\Schema\SchemaRegistry;
 
 class EntityStatementFactory {
-	/** @var EntitySchema[] */
-	private array $schemas = [];
+	/** @var array<string, array<string, PropertyType>> */
+	private array $types = [];
 
 	public function __construct(
 		private SchemaRegistry $registry,
@@ -26,7 +27,7 @@ class EntityStatementFactory {
 			entity_id: $entity_id,
 			schema: $schema,
 			prop: $prop,
-			prop_type: $this->getPropertyType( $schema, $prop ),
+			prop_type: $this->types[ $schema ][ $prop ] ?? $this->getPropertyType( $schema, $prop ),
 			val: $val,
 		);
 	}
@@ -92,21 +93,18 @@ class EntityStatementFactory {
 	}
 
 	/**
+	 * Property types of a schema are cached on the first call, the id statement property overrides the schema one.
+	 *
 	 * @throws UnknownPropertyException
 	 */
 	private function getPropertyType( string $schema, string $prop ) : PropertyType {
-		$this->schemas[ $schema ] ??= new EntitySchema( $schema, $this->registry );
+		if ( !isset( $this->types[ $schema ] ) ) {
+			$properties = (new EntitySchema( $schema, $this->registry ))->properties();
 
-		if ( $prop === EntityStatement::ID_PROP ) {
-			return PropertyType::Id;
+			$this->types[ $schema ] = array_map( fn ( EntityProperty $property ) => $property->type, $properties );
+			$this->types[ $schema ][ EntityStatement::ID_PROP ] = PropertyType::Id;
 		}
 
-		$type = $this->schemas[ $schema ]->getPropertyType( $prop );
-
-		if ( $type === null ) {
-			throw new UnknownPropertyException( "No property {$prop} is defined for schema {$schema}" );
-		}
-
-		return $type;
+		return $this->types[ $schema ][ $prop ] ?? throw new UnknownPropertyException( "No property {$prop} is defined for schema {$schema}" );
 	}
 }

@@ -26,7 +26,7 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	/** @var EntitySchema[] */
 	protected array $parents = [];
 
-	/** @var EntityProperty[] */
+	/** @var array<string, EntityProperty> */
 	protected array $props = [];
 	protected ?string $id = null;
 
@@ -34,14 +34,43 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	protected array $values = [];
 	protected ?EntityIdGenerator $id_generator = null;
 
+	/**
+	 * Instances with no values, by registry, class and schema name. Schema definition, parents and properties
+	 * depend on nothing else, so they are resolved once and copied from here. The entry is dropped with the registry.
+	 *
+	 * @var \WeakMap<SchemaRegistry, array<class-string, array<string, EntitySchema>>>|null
+	 */
+	private static ?\WeakMap $prototypes = null;
+
 	public function __construct( string $schema, SchemaRegistry $registry ) {
 		$this->entity = $schema;
 		$this->registry = $registry;
+
+		/** @var \WeakMap<SchemaRegistry, array<class-string, array<string, EntitySchema>>> $prototypes */
+		$prototypes = self::$prototypes ?? new \WeakMap();
+		$cache = $prototypes[ $registry ] ?? [];
+
+		if ( isset( $cache[ static::class ][ $schema ] ) ) {
+			$prototype = $cache[ static::class ][ $schema ];
+
+			$this->schema = $prototype->schema;
+			$this->parents = $prototype->parents;
+			$this->props = $prototype->props;
+
+			return;
+		}
 
 		$this->schema = $registry->get( $schema );
 
 		$this->loadParentSchemas();
 		$this->initProperties();
+
+		// read the cache again, as loadParentSchemas() has added the parents to it
+		$prototypes = self::$prototypes ?? $prototypes;
+		$cache = $prototypes[ $registry ] ?? [];
+		$cache[ static::class ][ $schema ] = clone $this;
+		$prototypes[ $registry ] = $cache;
+		self::$prototypes = $prototypes;
 	}
 
 	/**
@@ -58,7 +87,7 @@ class EntitySchema implements \JsonSerializable, \IteratorAggregate, \Countable,
 	/**
 	 * Returns all entity properties.
 	 *
-	 * @return EntityProperty[]
+	 * @return array<string, EntityProperty>
 	 */
 	public function properties() : array {
 		return $this->props;
