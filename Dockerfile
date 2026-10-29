@@ -8,6 +8,7 @@ RUN pecl install yaml zip && docker-php-ext-enable yaml
 RUN pecl install pcov && docker-php-ext-enable pcov \
  && echo "pcov.enabled = 1" >> "$PHP_INI_DIR/php.ini" \
  && echo "pcov.directory = ." >> "$PHP_INI_DIR/php.ini"
+RUN docker-php-ext-install pcntl
 
 COPY --from=composer:2.10.3 /usr/bin/composer /usr/local/bin/composer
 
